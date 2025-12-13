@@ -36,6 +36,7 @@ export async function extractAddresses(text: string): Promise<ExtractedData | nu
 
     // Construct the prompt by appending the sanitized message to the template
     const prompt = promptTemplate + sanitizedText;
+    console.log('Prompt: ' + prompt);
 
     // Validate required environment variable
     const model = process.env.GOOGLE_AI_MODEL;
@@ -43,6 +44,7 @@ export async function extractAddresses(text: string): Promise<ExtractedData | nu
       console.error('GOOGLE_AI_MODEL environment variable is not set');
       return null;
     }
+    console.log(model);
 
     // Make request to Gemini API
     const response = await ai.models.generateContent({
