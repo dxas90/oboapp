@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminDb, adminAuth } from "@/lib/firebase-admin";
 import { extractAddresses } from "@/lib/ai-service";
-import { geocodeAddresses } from "@/lib/geocoding-service";
+import {
+  geocodeAddresses,
+  geocodeIntersectionsForStreets,
+} from "@/lib/geocoding-router";
 import { convertToGeoJSON } from "@/lib/geojson-service";
 import { Message } from "@/lib/types";
 import { FieldValue } from "firebase-admin/firestore";
+import { GEOCODING_ALGO } from "@/lib/config";
 
 function convertTimestamp(timestamp: any): string {
   // Handle Firestore Timestamp from Admin SDK
@@ -96,44 +100,74 @@ export async function POST(request: NextRequest) {
     // Step 1: Extract structured data using Google AI (pins and street sections)
     const extractedData = await extractAddresses(text);
 
-    // Step 2: Collect all unique addresses that need geocoding
-    const addressesToGeocode = new Set<string>();
+    // Step 2: Geocode based on the configured algorithm
+    let addresses;
+    let preGeocodedMap = new Map<string, { lat: number; lng: number }>();
 
-    if (extractedData) {
-      // Add pin addresses
-      extractedData.pins.forEach((pin) => {
-        addressesToGeocode.add(pin.address);
-      });
+    if (GEOCODING_ALGO === "google_directions") {
+      // Directions-based approach: handle pins and streets separately
+      addresses = [];
 
-      // Add street endpoint addresses (from and to)
-      extractedData.streets.forEach((street) => {
-        addressesToGeocode.add(street.from);
-        addressesToGeocode.add(street.to);
+      // Geocode pins (simple addresses)
+      if (extractedData?.pins) {
+        for (const pin of extractedData.pins) {
+          const geocoded = await geocodeAddresses([pin.address]);
+          addresses.push(...geocoded);
+          // Add to map
+          geocoded.forEach((addr) => {
+            preGeocodedMap.set(addr.originalText, addr.coordinates);
+          });
+        }
+      }
+
+      // Geocode street intersections for the geojson service
+      if (extractedData?.streets) {
+        const streetGeocodedMap = await geocodeIntersectionsForStreets(
+          extractedData.streets
+        );
+        // Merge into preGeocodedMap
+        streetGeocodedMap.forEach((coords, key) => {
+          preGeocodedMap.set(key, coords);
+        });
+      }
+    } else {
+      // Traditional approach: collect all addresses and geocode
+      const addressesToGeocode = new Set<string>();
+
+      if (extractedData) {
+        // Add pin addresses
+        extractedData.pins.forEach((pin) => {
+          addressesToGeocode.add(pin.address);
+        });
+
+        // Add street endpoint addresses (from and to)
+        extractedData.streets.forEach((street) => {
+          addressesToGeocode.add(street.from);
+          addressesToGeocode.add(street.to);
+        });
+      }
+
+      console.log(
+        `Collected ${addressesToGeocode.size} unique addresses to geocode`
+      );
+
+      // Geocode all addresses in one batch
+      addresses = await geocodeAddresses(Array.from(addressesToGeocode));
+      console.log(
+        `Successfully geocoded ${addresses.length}/${addressesToGeocode.size} addresses`
+      );
+
+      // Build map
+      addresses.forEach((addr) => {
+        preGeocodedMap.set(addr.originalText, addr.coordinates);
       });
     }
 
-    console.log(
-      `Collected ${addressesToGeocode.size} unique addresses to geocode`
-    );
-
-    // Step 3: Geocode all addresses in one batch
-    const addresses = await geocodeAddresses(Array.from(addressesToGeocode));
-    console.log(
-      `Successfully geocoded ${addresses.length}/${addressesToGeocode.size} addresses`
-    );
-
-    // Step 4: Convert to GeoJSON using pre-geocoded addresses
+    // Step 3: Convert to GeoJSON using pre-geocoded addresses
     let geoJson = undefined;
     if (extractedData) {
       try {
-        // Create a map of original text to coordinates for efficient lookup
-        const geocodedMap = new Map(
-          addresses.map((addr) => [
-            addr.originalText,
-            { lat: addr.coordinates.lat, lng: addr.coordinates.lng },
-          ])
-        );
-        geoJson = await convertToGeoJSON(extractedData, geocodedMap);
+        geoJson = await convertToGeoJSON(extractedData, preGeocodedMap);
         console.log(
           `Generated GeoJSON with ${geoJson.features.length} features`
         );
