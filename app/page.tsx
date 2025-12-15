@@ -1,29 +1,47 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from 'react';
-import MapComponent from '@/components/MapComponent';
-import MessageForm from '@/components/MessageForm';
-import { Message } from '@/lib/types';
+import { useEffect, useState, useCallback, useRef } from "react";
+import MapComponent from "@/components/MapComponent";
+import { Message } from "@/lib/types";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mapHeight, setMapHeight] = useState<number>(600);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Calculate map height based on viewport
+  useEffect(() => {
+    const updateHeight = () => {
+      if (containerRef.current) {
+        const height = containerRef.current.clientHeight;
+        setMapHeight(height);
+      }
+    };
+
+    updateHeight();
+    globalThis.addEventListener("resize", updateHeight);
+
+    return () => {
+      globalThis.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   const fetchMessages = useCallback(async () => {
     try {
       setError(null);
-      const response = await fetch('/api/messages');
-      
+      const response = await fetch("/api/messages");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch messages');
+        throw new Error("Failed to fetch messages");
       }
 
       const data = await response.json();
       setMessages(data.messages || []);
     } catch (err) {
-      setError('Failed to load messages. Please refresh the page.');
-      console.error('Error fetching messages:', err);
+      setError("Failed to load messages. Please refresh the page.");
+      console.error("Error fetching messages:", err);
     } finally {
       setIsLoading(false);
     }
@@ -31,71 +49,47 @@ export default function Home() {
 
   useEffect(() => {
     fetchMessages();
-  }, [fetchMessages]);
 
-  const handleMessageSubmit = useCallback(() => {
-    // Refresh messages after a short delay to allow processing
-    setTimeout(() => {
-      fetchMessages();
-    }, 2000);
+    // Listen for message submission events
+    const handleMessageSubmitted = () => {
+      setTimeout(() => {
+        fetchMessages();
+      }, 2000);
+    };
+
+    globalThis.addEventListener("messageSubmitted", handleMessageSubmitted);
+
+    return () => {
+      globalThis.removeEventListener(
+        "messageSubmitted",
+        handleMessageSubmitted
+      );
+    };
   }, [fetchMessages]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Add padding-top to account for overlapping logo: pt-20 (80px) = 64px logo overlap + 16px spacing */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
-        <MessageForm onMessageSubmit={handleMessageSubmit} />
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-md">
-            {error}
+    <div className="flex-1 flex flex-col" ref={containerRef}>
+      {/* Error message if any */}
+      {error && (
+        <div className="bg-white border-b shadow-sm z-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="p-4 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
           </div>
-        )}
+        </div>
+      )}
 
+      {/* Map - Takes all available space */}
+      <div className="flex-1 relative" style={{ minHeight: `${mapHeight}px` }}>
         {isLoading ? (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
             <p className="text-gray-600">Loading map...</p>
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">
-              Map of Oborishte District
-              {messages.length > 0 && (
-                <span className="text-sm font-normal text-gray-600 ml-2">
-                  ({messages.reduce((count, msg) => count + (msg.addresses?.length || 0), 0)} location{messages.reduce((count, msg) => count + (msg.addresses?.length || 0), 0) !== 1 ? 's' : ''})
-                </span>
-              )}
-            </h2>
-            <MapComponent messages={messages} />
-          </div>
+          <MapComponent messages={messages} />
         )}
-
-        {!isLoading && messages.length > 0 && (
-          <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Recent Messages</h2>
-            <div className="space-y-4">
-              {messages.map((message) => (
-                <div key={message.id} className="border-b pb-4 last:border-b-0">
-                  <p className="text-gray-900 mb-2">{message.text}</p>
-                  {message.addresses && message.addresses.length > 0 && (
-                    <div className="text-sm text-gray-600">
-                      <p className="font-medium">Extracted addresses:</p>
-                      <ul className="list-disc list-inside ml-2">
-                        {message.addresses.map((addr, idx) => (
-                          <li key={idx}>{addr.formattedAddress}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <p className="text-xs text-gray-500 mt-2">
-                    {new Date(message.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </main>
+      </div>
     </div>
   );
 }

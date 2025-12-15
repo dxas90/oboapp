@@ -2,46 +2,49 @@
 
 import { useState } from "react";
 import AuthButton from "./AuthButton";
+import { useAuth } from "@/lib/auth-context";
 
-export default function Header() {
+interface HeaderProps {
+  onOpenMessageModal: () => void;
+}
+
+export default function Header({ onOpenMessageModal }: HeaderProps) {
+  const { user } = useAuth();
   const [logoError, setLogoError] = useState(false);
 
   return (
     <>
-      {/* Top Header - Dark Blue - max 60px visible height */}
-      <header className="bg-[#2c3e50] text-white relative h-[60px]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+      {/* Top Header - Dark Blue */}
+      <header className="bg-[#2c3e50] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Main Header with Logo */}
-          <div className="flex items-center justify-between h-full relative">
+          <div className="flex items-center justify-between py-3">
             {/* Left side - Logo and Title */}
-            <div className="flex items-center">
-              {/* Logo - overlaps into content area */}
-              <div className="relative z-10">
-                <div className="w-28 h-36 -mb-20">
-                  {!logoError ? (
-                    <img
-                      src="/logo.png"
-                      alt="СО Оборище"
-                      className="w-full h-full object-contain"
-                      onError={() => setLogoError(true)}
-                    />
-                  ) : (
-                    <div className="w-28 h-36 bg-white rounded-lg flex items-center justify-center shadow-lg border-4 border-yellow-400">
-                      <span className="text-[#2c3e50] font-bold text-sm text-center leading-tight">
-                        <span className="block">СО</span>
-                        <span className="block">Оборище</span>
-                      </span>
-                    </div>
-                  )}
-                </div>
+            <div className="flex items-center gap-4">
+              {/* Logo - contained within header */}
+              <div className="flex-shrink-0">
+                {!logoError ? (
+                  <img
+                    src="/logo.png"
+                    alt="СО Оборище"
+                    className="h-12 w-auto object-contain"
+                    onError={() => setLogoError(true)}
+                  />
+                ) : (
+                  <div className="h-12 w-12 bg-white rounded flex items-center justify-center border-2 border-yellow-400">
+                    <span className="text-[#2c3e50] font-bold text-xs text-center leading-tight">
+                      СО
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className="ml-6">
+              <div>
                 <h1 className="text-lg font-bold">Район Оборище</h1>
               </div>
             </div>
 
             {/* Right side - Auth Button */}
-            <div className="relative z-10">
+            <div>
               <AuthButton />
             </div>
           </div>
@@ -51,13 +54,32 @@ export default function Header() {
       {/* Navigation Bar - Light Blue */}
       <nav className="bg-[#5DADE2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex gap-6 py-3">
+          <div className="flex gap-6 py-3 items-center">
             <a
               href="/"
               className="text-white hover:text-gray-200 text-sm font-medium"
             >
               НАЧАЛО
             </a>
+            {user && (
+              <button
+                onClick={onOpenMessageModal}
+                className="text-white hover:text-gray-200 text-sm font-medium flex items-center gap-1"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M12 4v16m8-8H4"></path>
+                </svg>
+                СЪОБЩЕНИЕ
+              </button>
+            )}
           </div>
         </div>
       </nav>

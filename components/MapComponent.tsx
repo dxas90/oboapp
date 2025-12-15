@@ -17,7 +17,7 @@ const OBORISHTE_CENTER = {
 
 const mapContainerStyle = {
   width: "100%",
-  height: "600px",
+  height: "100%",
 };
 
 // Desaturated map style
@@ -78,22 +78,26 @@ export default function MapComponent({ messages }: MapComponentProps) {
   }, []);
 
   return (
-    <LoadScript
-      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
-    >
-      {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          options={mapOptions}
-          onLoad={onMapLoad}
-        >
-          <GeoJSONLayer messages={messages} />
-        </GoogleMap>
-      ) : (
-        <div className="w-full h-[600px] flex items-center justify-center bg-gray-100 rounded-lg">
-          <p className="text-red-600">Google Maps API key is not configured</p>
-        </div>
-      )}
-    </LoadScript>
+    <div className="absolute inset-0">
+      <LoadScript
+        googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
+      >
+        {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ? (
+          <GoogleMap
+            mapContainerStyle={mapContainerStyle}
+            options={mapOptions}
+            onLoad={onMapLoad}
+          >
+            <GeoJSONLayer messages={messages} />
+          </GoogleMap>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+            <p className="text-red-600">
+              Google Maps API key is not configured
+            </p>
+          </div>
+        )}
+      </LoadScript>
+    </div>
   );
 }
