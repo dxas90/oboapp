@@ -82,6 +82,40 @@ export async function geocodeStreets(
 }
 
 /**
+ * Get street geometry (centerline) using the configured algorithm
+ */
+export async function getStreetGeometry(
+  streetName: string,
+  startCoords: { lat: number; lng: number },
+  endCoords: { lat: number; lng: number }
+): Promise<[number, number][] | null> {
+  if (GEOCODING_ALGO === "overpass") {
+    // Use OSM Overpass API + Turf.js for real street geometries
+    const { getStreetSectionGeometry } = await import(
+      "./overpass-geocoding-service"
+    );
+    const geometry = await getStreetSectionGeometry(
+      streetName,
+      startCoords,
+      endCoords
+    );
+    return geometry as [number, number][] | null;
+  } else if (GEOCODING_ALGO === "mapbox_geocoding") {
+    // Use Mapbox Directions API
+    const { getMapboxStreetGeometry } = await import(
+      "./mapbox-geocoding-service"
+    );
+    return getMapboxStreetGeometry(startCoords, endCoords);
+  } else {
+    // Use Google Directions API (for both google_geocoding and google_directions)
+    const { getGoogleStreetGeometry } = await import(
+      "./directions-geocoding-service"
+    );
+    return getGoogleStreetGeometry(startCoords, endCoords);
+  }
+}
+
+/**
  * Geocode street section intersections using the configured algorithm
  */
 export async function geocodeIntersectionsForStreets(

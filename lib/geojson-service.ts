@@ -3,13 +3,11 @@ import {
   StreetSection,
   GeoJSONFeatureCollection,
   GeoJSONFeature,
-  GeoJSONPoint,
   GeoJSONLineString,
   GeoJSONPolygon,
   IntersectionCoordinates,
 } from "./types";
-import { getStreetSectionGeometry } from "./overpass-geocoding-service";
-import { GEOCODING_ALGO } from "./config";
+import { getStreetGeometry } from "./geocoding-router";
 
 // Constants for API rate limiting
 const GEOCODING_DELAY_MS = 100;
@@ -446,91 +444,25 @@ async function getStreetCenterline(
       };
     }
 
-    // Use Overpass geometry if using Overpass algorithm
-    if (GEOCODING_ALGO === "overpass" && streetName) {
-      console.log(`   Getting OSM geometry for: ${streetName}`);
-      const osmGeometry = await getStreetSectionGeometry(
-        streetName,
-        startCoords,
-        endCoords
-      );
+    // Use the configured geocoding algorithm via the router
+    console.log(
+      `   Getting street geometry for: ${streetName || "unnamed street"}`
+    );
+    const geometry = await getStreetGeometry(
+      streetName || "",
+      startCoords,
+      endCoords
+    );
 
-      if (osmGeometry && osmGeometry.length >= 2) {
-        console.log(
-          `   ✅ Using OSM geometry with ${osmGeometry.length} points`
-        );
-        return {
-          type: "LineString",
-          coordinates: osmGeometry as [number, number][],
-        };
-      } else {
-        console.log(
-          `   ❌ Could not get OSM geometry, using fallback straight line`
-        );
-        // Fallback to straight line between the two points
-        return {
-          type: "LineString",
-          coordinates: [
-            [startCoords.lng, startCoords.lat],
-            [endCoords.lng, endCoords.lat],
-          ],
-        };
-      }
-    }
-
-    // For non-Overpass algorithms, use Google Directions
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    const origin = `${startCoords.lat},${startCoords.lng}`;
-    const destination = `${endCoords.lat},${endCoords.lng}`;
-    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=driving&key=${apiKey}`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.status === "OK" && data.routes && data.routes.length > 0) {
-      const route = data.routes[0];
-      const polyline = route.overview_polyline?.polyline;
-
-      if (polyline) {
-        const coordinates = decodePolyline(polyline);
-        return {
-          type: "LineString",
-          coordinates,
-        };
-      } else {
-        console.error("No polyline found in route response");
-        // Fall back to simple straight line
-        return {
-          type: "LineString",
-          coordinates: [
-            [startCoords.lng, startCoords.lat],
-            [endCoords.lng, endCoords.lat],
-          ],
-        };
-      }
-    }
-
-    // Provide more detailed error information
-    if (data.status === "OK" && (!data.routes || data.routes.length === 0)) {
-      console.error(
-        "API returned OK but no routes found, using fallback straight line"
-      );
-      // Fall back to simple straight line
+    if (geometry && geometry.length >= 2) {
+      console.log(`   ✅ Retrieved geometry with ${geometry.length} points`);
       return {
         type: "LineString",
-        coordinates: [
-          [startCoords.lng, startCoords.lat],
-          [endCoords.lng, endCoords.lat],
-        ],
+        coordinates: geometry,
       };
     } else {
-      console.error(
-        "Failed to retrieve centerline. API status:",
-        data.status,
-        "Error message:",
-        data.error_message || "None"
-      );
-      // Fall back to simple straight line
+      console.log(`   ❌ Could not get geometry, using fallback straight line`);
+      // Fallback to straight line between the two points
       return {
         type: "LineString",
         coordinates: [

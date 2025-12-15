@@ -32,6 +32,7 @@ interface DirectionsRoute {
 interface DirectionsResponse {
   status: string;
   routes: DirectionsRoute[];
+  error_message?: string;
 }
 
 /**
@@ -668,4 +669,83 @@ export async function geocodeStreetSections(
   }
 
   return geocodedAddresses;
+}
+
+/**
+ * Get street geometry between two points using Google Directions API
+ * Returns decoded polyline coordinates
+ *
+ * @param startCoords Starting point coordinates
+ * @param endCoords Ending point coordinates
+ * @returns Array of [longitude, latitude] coordinates, or null if failed
+ */
+export async function getGoogleStreetGeometry(
+  startCoords: { lat: number; lng: number },
+  endCoords: { lat: number; lng: number }
+): Promise<[number, number][] | null> {
+  try {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+      console.error("Google Maps API key not configured");
+      return null;
+    }
+
+    const origin = `${startCoords.lat},${startCoords.lng}`;
+    const destination = `${endCoords.lat},${endCoords.lng}`;
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=driving&key=${apiKey}`;
+
+    const response = await fetch(url);
+    const data: DirectionsResponse = await response.json();
+
+    if (data.status === "OK" && data.routes && data.routes.length > 0) {
+      const route = data.routes[0];
+      const polyline = route.overview_polyline?.points;
+
+      if (polyline) {
+        const coordinates = decodePolyline(polyline);
+        console.log(
+          `   ✅ Google Directions: Retrieved geometry with ${coordinates.length} points`
+        );
+        return coordinates;
+      } else {
+        console.error("No polyline found in route response");
+        // Fall back to simple straight line
+        return [
+          [startCoords.lng, startCoords.lat],
+          [endCoords.lng, endCoords.lat],
+        ];
+      }
+    }
+
+    // Provide more detailed error information
+    if (data.status === "OK" && (!data.routes || data.routes.length === 0)) {
+      console.error(
+        "API returned OK but no routes found, using fallback straight line"
+      );
+      // Fall back to simple straight line
+      return [
+        [startCoords.lng, startCoords.lat],
+        [endCoords.lng, endCoords.lat],
+      ];
+    } else {
+      console.error(
+        "Failed to retrieve geometry. API status:",
+        data.status,
+        "Error message:",
+        data.error_message || "None"
+      );
+      // Fall back to simple straight line
+      return [
+        [startCoords.lng, startCoords.lat],
+        [endCoords.lng, endCoords.lat],
+      ];
+    }
+  } catch (error) {
+    console.error("Error getting Google street geometry:", error);
+    // Fall back to simple straight line
+    return [
+      [startCoords.lng, startCoords.lat],
+      [endCoords.lng, endCoords.lat],
+    ];
+  }
 }

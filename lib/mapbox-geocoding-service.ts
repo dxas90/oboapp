@@ -219,3 +219,87 @@ export async function mapboxGeocodeIntersections(
 
   return geocodedMap;
 }
+
+/**
+ * Get street geometry between two points using Mapbox Directions API
+ * Returns polyline coordinates
+ *
+ * @param startCoords Starting point coordinates
+ * @param endCoords Ending point coordinates
+ * @returns Array of [longitude, latitude] coordinates, or null if failed
+ */
+export async function getMapboxStreetGeometry(
+  startCoords: { lat: number; lng: number },
+  endCoords: { lat: number; lng: number }
+): Promise<[number, number][] | null> {
+  try {
+    const apiKey = process.env.MAPBOX_ACCESS_TOKEN;
+    if (!apiKey) {
+      console.error("MAPBOX_ACCESS_TOKEN environment variable not set");
+      return null;
+    }
+
+    // Mapbox Directions API expects coordinates as lng,lat
+    const coordinates = `${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&access_token=${apiKey}`;
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `Mapbox Directions API error (${response.status}):`,
+        errorText
+      );
+      if (response.status === 403) {
+        console.error(
+          "⚠️  Token has URL restrictions. Use a SECRET token (sk.*) for server-side requests."
+        );
+      }
+      // Fall back to simple straight line
+      return [
+        [startCoords.lng, startCoords.lat],
+        [endCoords.lng, endCoords.lat],
+      ];
+    }
+
+    interface MapboxDirectionsResponse {
+      routes: Array<{
+        geometry: {
+          coordinates: [number, number][];
+          type: "LineString";
+        };
+        distance: number;
+        duration: number;
+      }>;
+      code: string;
+    }
+
+    const data: MapboxDirectionsResponse = await response.json();
+
+    if (data.code === "Ok" && data.routes && data.routes.length > 0) {
+      const route = data.routes[0];
+      const coordinates = route.geometry.coordinates;
+
+      console.log(
+        `   ✅ Mapbox Directions: Retrieved geometry with ${coordinates.length} points`
+      );
+
+      return coordinates;
+    }
+
+    console.warn(`Mapbox Directions API returned code: ${data.code}`);
+    // Fall back to simple straight line
+    return [
+      [startCoords.lng, startCoords.lat],
+      [endCoords.lng, endCoords.lat],
+    ];
+  } catch (error) {
+    console.error("Error getting Mapbox street geometry:", error);
+    // Fall back to simple straight line
+    return [
+      [startCoords.lng, startCoords.lat],
+      [endCoords.lng, endCoords.lat],
+    ];
+  }
+}
