@@ -2,7 +2,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#f8f9fa] border-t border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Section */}
           <div>
             <h3 className="font-bold text-lg mb-4 text-gray-900">
@@ -42,13 +42,6 @@ export default function Footer() {
                 </a>
               </div>
             </div>
-          </div>
-
-          {/* Information Center */}
-          <div>
-            <h3 className="font-bold text-lg mb-4 text-gray-900">
-              ОБЛАСТЕН ИНФОРМАЦИОНЕН ЦЕНТЪР СОФИЯ
-            </h3>
           </div>
         </div>
 

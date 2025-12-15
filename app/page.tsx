@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import MapComponent from "@/components/MapComponent";
+import MessageDetailView from "@/components/MessageDetailView";
 import { Message } from "@/lib/types";
 
 export default function Home() {
@@ -9,7 +11,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapHeight, setMapHeight] = useState<number>(600);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Calculate map height based on viewport
   useEffect(() => {
@@ -46,6 +51,43 @@ export default function Home() {
       setIsLoading(false);
     }
   }, []);
+
+  // Handle feature click - update URL and select message
+  const handleFeatureClick = useCallback(
+    (messageId: string) => {
+      const message = messages.find((m) => m.id === messageId);
+      if (message) {
+        setSelectedMessage(message);
+        // Update URL with query parameter
+        router.push(`/?messageId=${messageId}`, { scroll: false });
+      }
+    },
+    [messages, router]
+  );
+
+  // Handle closing detail view
+  const handleCloseDetail = useCallback(() => {
+    setSelectedMessage(null);
+    // Remove query parameter from URL
+    router.push("/", { scroll: false });
+  }, [router]);
+
+  // Sync selected message with URL parameter
+  useEffect(() => {
+    const messageId = searchParams.get("messageId");
+    if (messageId && messages.length > 0) {
+      const message = messages.find((m) => m.id === messageId);
+      if (message) {
+        setSelectedMessage(message);
+      } else {
+        // Message not found, clear the parameter
+        setSelectedMessage(null);
+      }
+    } else if (!messageId && selectedMessage) {
+      // URL was changed (e.g., back button) without messageId
+      setSelectedMessage(null);
+    }
+  }, [searchParams, messages, selectedMessage]);
 
   useEffect(() => {
     fetchMessages();
@@ -87,9 +129,18 @@ export default function Home() {
             <p className="text-gray-600">Loading map...</p>
           </div>
         ) : (
-          <MapComponent messages={messages} />
+          <MapComponent
+            messages={messages}
+            onFeatureClick={handleFeatureClick}
+          />
         )}
       </div>
+
+      {/* Message Detail View */}
+      <MessageDetailView
+        message={selectedMessage}
+        onClose={handleCloseDetail}
+      />
     </div>
   );
 }

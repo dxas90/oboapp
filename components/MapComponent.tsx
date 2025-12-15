@@ -7,6 +7,7 @@ import GeoJSONLayer from "./GeoJSONLayer";
 
 interface MapComponentProps {
   readonly messages: Message[];
+  readonly onFeatureClick?: (messageId: string) => void;
 }
 
 // Oborishte District center coordinates
@@ -68,9 +69,13 @@ const mapOptions = {
   streetViewControl: true,
   fullscreenControl: true,
   styles: mapStyles,
+  clickableIcons: false, // Disable clicking on POIs (shops, hospitals, etc.)
 };
 
-export default function MapComponent({ messages }: MapComponentProps) {
+export default function MapComponent({
+  messages,
+  onFeatureClick,
+}: MapComponentProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
@@ -88,7 +93,7 @@ export default function MapComponent({ messages }: MapComponentProps) {
             options={mapOptions}
             onLoad={onMapLoad}
           >
-            <GeoJSONLayer messages={messages} />
+            <GeoJSONLayer messages={messages} onFeatureClick={onFeatureClick} />
           </GoogleMap>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-100">
