@@ -7,6 +7,8 @@ Your task is to extract location, time, and responsible entity information from 
 
 You must strictly follow the rules below and return **only valid JSON**.
 
+Try to limit context to Sofia, Bulgaria.
+
 ---
 
 ## Output Rules (STRICT)
@@ -59,8 +61,11 @@ Rules:
 Example:
 
 ```json
-{"address": "26 Georgi Benkovski, Sofia, Bulgaria", "timespan": []}
-{"address": "102 Oborishte, Sofia, Bulgaria", "timespans": []}
+{"address": "ul. \"Georgi Benkovski'\" 26, Sofia, Bulgaria", "timespan": []}
+{"address": "ul. \"Random Street Name'\" 18, Sofia, Bulgaria", "timespan": []}
+{"address": "ul. Oborishte 102, Sofia, Bulgaria", "timespans": []}
+{"address": "ul. Bunaya 10, Sofia, Bulgaria", "timespans": []}
+{"address": "bul. Ispania 10, Sofia, Bulgaria", "timespans": []}
 ```
 
 ---
@@ -89,16 +94,22 @@ Rules:
 
 Street logic:
 
-- Text: “Street A between Street X and Street Y”
+- Text: "бул. A от кръстовището с ул. X до това с бул. Y"
+
+  - `street`: "bul. A, Sofia, Bulgaria"
+  - `from`: "bul. A, Sofia, Bulgaria & ul. X, Sofia, Bulgaria"
+  - `to`: "bul. A, Sofia, Bulgaria & bul. Y, Sofia, Bulgaria"
+
+- Text: "Street A between Street X and Street Y"
   - `street`: "Street A, Sofia, Bulgaria"
-  - `from`: "Street A & Street X, Sofia, Bulgaria"
-  - `to`: "Street A & Street Y, Sofia, Bulgaria"
+  - `from`: "Street A, Sofia, Bulgaria & Street X, Sofia, Bulgaria"
+  - `to`: "Street A, Sofia, Bulgaria & Street Y, Sofia, Bulgaria"
 
 Address-number logic:
 
-- Text: “from №3 to Street Y”
-  - `from`: "3 Street A, Sofia, Bulgaria"
-  - `to`: "Street A & Street Y, Sofia, Bulgaria"
+- Text: "from №3 to Street Y"
+  - `from`: "Street \"A\" 3, Sofia, Bulgaria"
+  - `to`: "Street \"A\", Sofia, Bulgaria & Street Y, Sofia, Bulgaria"
 
 ---
 
@@ -127,17 +138,25 @@ Rules:
 ### Address Normalization
 
 - Append ", Sofia, Bulgaria" if city or country is missing
-- Remove street type prefixes: ул., бул., пл.
-- Place street numbers at the BEGINNING:
-  - "ул. Х №12" → "12 X, Sofia, Bulgaria"
+- Transliterate street type prefixes: ул., бул. -> ul., bul.
+- Normalize street numbers:
+  - 'ул. Хxxxx №12' → 'ul. Xxxxxx 12, Sofia, Bulgaria'
+- put multi-word street names in quotes
+  - 'ул. Хxx Xxxxxx №12' → 'ul. "Xxxx Xxxxxx" 12, Sofia, Bulgaria'
 
 ---
 
 ### Intersection Normalization
 
-- Format intersections as:
-  - "Street A & Street B, Sofia, Bulgaria"
-- Do NOT repeat city per street
+- Format intersections with **full street type prefix for both streets**:
+  - "bul. Madrid, Sofia, Bulgaria & bul. \"Evlogi and Hristo Georgievi\", Sofia, Bulgaria"
+  - "ul. \"Xxxx Xxxxxx\", Sofia, Bulgaria & ul. Yyyyyy, Sofia, Bulgaria"
+- Each street in the intersection must include:
+  - Street type prefix (ul., bul., etc.)
+  - Street name (in quotes if multi-word)
+  - City and country
+- Separate the two streets with " & "
+- Use the SAME format structure for both streets in the intersection
 
 ---
 
@@ -147,6 +166,7 @@ Rules:
 - Examples:
   - "Георги" → "Georgi"
   - "Султан тепе" → "Sultan tepe"
+  - 'Екзарх Йосиф" → "Ekzarh Yosif"
 - Do NOT translate street names. Only **transliterate**.
 
 ---
