@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { GoogleMap, LoadScript } from "@react-google-maps/api";
 import { Message } from "@/lib/types";
-import AddressMarkers from "./AddressMarkers";
 import GeoJSONLayer from "./GeoJSONLayer";
 
 interface MapComponentProps {
@@ -21,31 +20,58 @@ const mapContainerStyle = {
   height: "600px",
 };
 
+// Desaturated map style
+const mapStyles = [
+  {
+    elementType: "geometry",
+    stylers: [{ saturation: -60 }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ saturation: -40 }, { lightness: 10 }],
+  },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ visibility: "on" }, { saturation: -100 }, { lightness: 60 }],
+  },
+  {
+    featureType: "poi",
+    elementType: "geometry",
+    stylers: [{ saturation: -100 }, { lightness: 40 }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.icon",
+    stylers: [{ saturation: -100 }, { lightness: 20 }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ saturation: -100 }, { lightness: 20 }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ saturation: -60 }, { lightness: 20 }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ saturation: -40 }, { lightness: 30 }],
+  },
+];
+
 const mapOptions = {
   zoom: 15,
   center: OBORISHTE_CENTER,
   mapTypeControl: true,
   streetViewControl: true,
   fullscreenControl: true,
+  styles: mapStyles,
 };
 
 export default function MapComponent({ messages }: MapComponentProps) {
-  const [selectedMessage, setSelectedMessage] = useState<{
-    message: Message;
-    addressIndex: number;
-  } | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
-
-  const handleMarkerClick = useCallback(
-    (message: Message, addressIndex: number) => {
-      setSelectedMessage({ message, addressIndex });
-    },
-    []
-  );
-
-  const handleInfoWindowClose = useCallback(() => {
-    setSelectedMessage(null);
-  }, []);
 
   const onMapLoad = useCallback((map: google.maps.Map) => {
     mapRef.current = map;
@@ -61,12 +87,6 @@ export default function MapComponent({ messages }: MapComponentProps) {
           options={mapOptions}
           onLoad={onMapLoad}
         >
-          <AddressMarkers
-            messages={messages}
-            selectedMessage={selectedMessage}
-            onMarkerClick={handleMarkerClick}
-            onInfoWindowClose={handleInfoWindowClose}
-          />
           <GeoJSONLayer messages={messages} />
         </GoogleMap>
       ) : (

@@ -8,7 +8,7 @@ import {
 import { convertToGeoJSON } from "@/lib/geojson-service";
 import { Message } from "@/lib/types";
 import { FieldValue } from "firebase-admin/firestore";
-import { GEOCODING_ALGO } from "@/lib/config";
+import { STREET_GEOCODING_ALGO, PIN_GEOCODING_ALGO } from "@/lib/config";
 
 function convertTimestamp(timestamp: any): string {
   // Handle Firestore Timestamp from Admin SDK
@@ -105,13 +105,14 @@ export async function POST(request: NextRequest) {
     let preGeocodedMap = new Map<string, { lat: number; lng: number }>();
 
     if (
-      GEOCODING_ALGO === "google_directions" ||
-      GEOCODING_ALGO === "overpass"
+      STREET_GEOCODING_ALGO === "google_directions" ||
+      STREET_GEOCODING_ALGO === "overpass"
     ) {
       // Directions/Overpass-based approach: handle pins and streets separately
       addresses = [];
 
-      // Geocode pins (simple addresses)
+      // Geocode pins (simple addresses) using PIN_GEOCODING_ALGO
+      console.log(`Geocoding pins using: ${PIN_GEOCODING_ALGO}`);
       if (extractedData?.pins) {
         for (const pin of extractedData.pins) {
           const geocoded = await geocodeAddresses([pin.address]);
@@ -123,7 +124,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // Geocode street intersections for the geojson service
+      // Geocode street intersections using STREET_GEOCODING_ALGO
+      console.log(`Geocoding streets using: ${STREET_GEOCODING_ALGO}`);
       if (extractedData?.streets) {
         const streetGeocodedMap = await geocodeIntersectionsForStreets(
           extractedData.streets

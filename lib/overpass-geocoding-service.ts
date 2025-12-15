@@ -517,6 +517,57 @@ export async function getStreetSectionGeometry(
 }
 
 /**
+ * Geocode a specific address with house number using Nominatim
+ */
+async function geocodeAddressWithNominatim(
+  address: string
+): Promise<{ lat: number; lng: number } | null> {
+  try {
+    // Ensure address includes Sofia context
+    const fullAddress =
+      address.includes("София") || address.includes("Sofia")
+        ? address
+        : `${address}, София, България`;
+
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(
+      fullAddress
+    )}&format=json&limit=1&addressdetails=1`;
+
+    const response = await fetch(url, {
+      headers: {
+        "User-Agent": "OborishteMap/1.0",
+      },
+    });
+
+    if (!response.ok) {
+      console.warn(`Nominatim API error: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+
+    if (data && data.length > 0) {
+      const result = data[0];
+      const coords = {
+        lat: Number.parseFloat(result.lat),
+        lng: Number.parseFloat(result.lon),
+      };
+
+      console.log(
+        `   ✅ Nominatim geocoded: "${address}" → [${coords.lat}, ${coords.lng}]`
+      );
+      return coords;
+    }
+
+    console.warn(`   ❌ Nominatim found no results for: "${address}"`);
+    return null;
+  } catch (error) {
+    console.error(`Error geocoding with Nominatim for ${address}:`, error);
+    return null;
+  }
+}
+
+/**
  * Geocode individual addresses using Overpass API
  */
 export async function overpassGeocodeAddresses(
@@ -528,23 +579,42 @@ export async function overpassGeocodeAddresses(
     const address = addresses[i];
 
     try {
-      const geom = await getStreetGeometryFromOverpass(address);
+      // Check if this is a specific address (contains number)
+      // Pattern: "ул. Name Number" or "бул. Name Number"
+      const hasNumber = /\d+/.test(address);
 
-      if (geom) {
-        const centerPoint = turf.center(geom);
-        const coords = centerPoint.geometry.coordinates;
+      let coords: { lat: number; lng: number } | null = null;
+
+      if (hasNumber) {
+        // Use Nominatim for specific addresses with house numbers
+        console.log(`   Geocoding numbered address with Nominatim: ${address}`);
+        coords = await geocodeAddressWithNominatim(address);
+      } else {
+        // Use Overpass for street names (get center of street)
+        const geom = await getStreetGeometryFromOverpass(address);
+
+        if (geom) {
+          const centerPoint = turf.center(geom);
+          const centerCoords = centerPoint.geometry.coordinates;
+          coords = {
+            lat: centerCoords[1],
+            lng: centerCoords[0],
+          };
+        }
+      }
+
+      if (coords) {
         results.push({
           originalText: address,
           formattedAddress: address,
-          coordinates: {
-            lat: coords[1],
-            lng: coords[0],
-          },
+          coordinates: coords,
           geoJson: {
             type: "Point",
-            coordinates: coords as [number, number],
+            coordinates: [coords.lng, coords.lat],
           },
         });
+      } else {
+        console.warn(`   ⚠️  Failed to geocode: ${address}`);
       }
     } catch (error) {
       console.error(`Error geocoding ${address}:`, error);
