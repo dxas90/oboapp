@@ -8,7 +8,8 @@
     "start": "next start",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "crawl:rayon-oborishte": "tsx lib/crawlers/rayon-oborishte-bg/index.ts"
   },
   "dependencies": {
     "@google/genai": "^1.33.0",
@@ -28,13 +29,17 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/turndown": "^5.0.6",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.15",
     "@vitest/ui": "^4.0.15",
     "eslint": "*",
     "eslint-config-next": "^16.0.10",
     "happy-dom": "^20.0.11",
+    "playwright": "^1.57.0",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "turndown": "^7.2.2",
     "typescript": "^5",
     "vitest": "^4.0.15"
   }
