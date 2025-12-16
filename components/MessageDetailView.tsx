@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Message } from "@/lib/types";
+import { useDragToClose } from "@/lib/hooks/useDragToClose";
 
 interface MessageDetailViewProps {
   readonly message: Message | null;
@@ -14,6 +15,9 @@ export default function MessageDetailView({
 }: Readonly<MessageDetailViewProps>) {
   const [isVisible, setIsVisible] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
+
+  // Drag to close functionality
+  const { isDragging, dragOffset, handlers } = useDragToClose({ onClose });
 
   // Handle animation states
   useEffect(() => {
@@ -85,11 +89,21 @@ export default function MessageDetailView({
               : "translate-y-full sm:translate-y-0 sm:translate-x-full"
           }
         `}
+        style={{
+          transform: isDragging ? `translateY(${dragOffset}px)` : undefined,
+          transition: isDragging ? "none" : undefined,
+        }}
       >
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between shadow-sm z-10">
           {/* Mobile drag handle */}
-          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full sm:hidden" />
+          <button
+            type="button"
+            className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full sm:hidden cursor-grab active:cursor-grabbing"
+            {...handlers}
+            onClick={onClose}
+            aria-label="Drag to close or tap to close"
+          />
 
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 pt-3 sm:pt-0">
             Message Details
