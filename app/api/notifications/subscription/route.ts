@@ -1,28 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb, adminAuth } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { NotificationSubscription } from "@/lib/types";
-
-// Helper to verify auth token and get user ID
-async function verifyAuthToken(
-  authHeader: string | null
-): Promise<{ userId: string; userEmail: string }> {
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new Error("Missing auth token");
-  }
-
-  const token = authHeader.split("Bearer ")[1];
-
-  try {
-    const decodedToken = await adminAuth.verifyIdToken(token);
-    return {
-      userId: decodedToken.uid,
-      userEmail: decodedToken.email || "",
-    };
-  } catch (error) {
-    console.error("Error verifying token:", error);
-    throw new Error("Invalid auth token");
-  }
-}
+import { verifyAuthToken } from "@/lib/messageIngest/helpers";
 
 // Helper to convert Firestore timestamp to ISO string
 function convertTimestamp(timestamp: any): string {
