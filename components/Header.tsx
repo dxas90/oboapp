@@ -75,12 +75,6 @@ export default function Header({ onOpenMessageModal }: HeaderProps) {
       <nav className="bg-[#5DADE2]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-6 py-3 items-center">
-            <a
-              href="/"
-              className="text-white hover:text-gray-200 text-sm font-medium"
-            >
-              НАЧАЛО
-            </a>
             {user && (
               <button
                 onClick={onOpenMessageModal}
