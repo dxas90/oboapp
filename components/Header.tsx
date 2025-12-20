@@ -58,23 +58,25 @@ export default function Header({ onOpenMessageModal }: HeaderProps) {
                       {user.displayName || user.email}
                     </span>
                   </div>
-                  <button
-                    onClick={onOpenMessageModal}
-                    className="p-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-all duration-200"
-                    aria-label="Send message"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                  {user.email === "valery.buchinsky@gmail.com" && (
+                    <button
+                      onClick={onOpenMessageModal}
+                      className="p-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-all duration-200"
+                      aria-label="Send message"
                     >
-                      <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                  </button>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                    </button>
+                  )}
                   <button
                     onClick={signOut}
                     className="px-4 py-2 text-sm font-medium text-white bg-[#E74C3C] rounded-md hover:bg-[#C0392B] transition-colors"

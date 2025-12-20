@@ -138,6 +138,14 @@ export async function POST(request: NextRequest) {
     const authHeader = request.headers.get("authorization");
     const { userId, userEmail } = await verifyAuthToken(authHeader);
 
+    // Authorization - restrict to specific user (temporary)
+    if (userEmail !== "valery.buchinsky@gmail.com") {
+      return NextResponse.json(
+        { error: "Unauthorized - Access restricted" },
+        { status: 403 }
+      );
+    }
+
     // Parse and validate request
     const { text } = await request.json();
     validateMessageText(text);
