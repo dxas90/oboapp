@@ -6,6 +6,7 @@ Automated data collectors that fetch public notifications and disruptions from e
 
 - **rayon-oborishte-bg** - Scrapes repair/disruption notices from Rayon Oborishte's website
 - **sofiyska-voda** - Fetches water supply disruptions from Sofiyska Voda's ArcGIS API
+- **toplo-bg** - Fetches heating infrastructure incidents from Toplo.bg with pre-geocoded polygons
 
 ## How They Work
 
@@ -21,6 +22,7 @@ Each crawler:
 ```bash
 npm run crawl:rayon-oborishte
 npm run crawl:sofiyska-voda -- --dry-run  # preview mode
+npm run crawl:toplo -- --dry-run
 ```
 
 ## Data Pipeline
