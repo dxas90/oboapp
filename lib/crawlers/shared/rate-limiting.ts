@@ -1,4 +1,4 @@
-import { delay } from "../../delay";
+import { delay } from "@/lib/delay";
 
 /**
  * Rate limiter class to throttle requests

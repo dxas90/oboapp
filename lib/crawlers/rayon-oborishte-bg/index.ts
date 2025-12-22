@@ -6,8 +6,8 @@ import { Browser, Page } from "playwright";
 import type { Firestore } from "firebase-admin/firestore";
 import { SourceDocument, PostLink } from "./types";
 import { launchBrowser } from "../shared/browser";
+import { delay } from "@/lib/delay";
 import { createTurndownService } from "../shared/markdown";
-import { delay } from "../../delay";
 import { isUrlProcessed, saveSourceDocument } from "../shared/firestore";
 import { parseBulgarianDate } from "../shared/date-utils";
 

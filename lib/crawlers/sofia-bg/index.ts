@@ -8,9 +8,9 @@ import { SourceDocument, PostLink } from "./types";
 import { SELECTORS } from "./selectors";
 import { launchBrowser } from "../shared/browser";
 import { createTurndownService } from "../shared/markdown";
-import { delay } from "../../delay";
 import { isUrlProcessed, saveSourceDocument } from "../shared/firestore";
 import { parseBulgarianDate } from "../shared/date-utils";
+import { delay } from "@/lib/delay";
 
 // Load environment variables from .env.local
 dotenv.config({ path: resolve(process.cwd(), ".env.local") });

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { delay, RateLimiter } from "../rate-limiting";
+import { RateLimiter } from "../rate-limiting";
+import { delay } from "@/lib/delay";
 
 describe("rate-limiting utilities", () => {
   describe("delay", () => {
