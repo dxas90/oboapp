@@ -36,32 +36,22 @@ function convertTimestamp(timestamp: any): string {
 }
 
 /**
- * Get all unprocessed messages (messages not yet matched with user interests)
+ * Get all unprocessed messages (messages without notificationsSent flag)
  */
 async function getUnprocessedMessages(adminDb: Firestore): Promise<Message[]> {
   console.log("📨 Fetching unprocessed messages...");
 
   const messagesRef = adminDb.collection("messages");
-  const matchesRef = adminDb.collection("notificationMatches");
 
-  // Get all messages
-  const messagesSnapshot = await messagesRef.orderBy("createdAt", "desc").get();
+  // Get all messages ordered by createdAt
+  const messagesSnapshot = await messagesRef.orderBy("createdAt", "asc").get();
 
-  // Get all message IDs that have been processed
-  const matchesSnapshot = await matchesRef.select("messageId").get();
-  const processedMessageIds = new Set<string>();
-  matchesSnapshot.forEach((doc) => {
-    const data = doc.data();
-    if (data.messageId) {
-      processedMessageIds.add(data.messageId);
-    }
-  });
-
-  // Filter out messages that have already been processed
+  // Filter for messages that don't have notificationsSent or where it's false
   const unprocessedMessages: Message[] = [];
   messagesSnapshot.forEach((doc) => {
-    if (!processedMessageIds.has(doc.id)) {
-      const data = doc.data();
+    const data = doc.data();
+    // Only include messages where notificationsSent is not true
+    if (data.notificationsSent !== true) {
       unprocessedMessages.push({
         id: doc.id,
         text: data.text,
@@ -72,9 +62,30 @@ async function getUnprocessedMessages(adminDb: Firestore): Promise<Message[]> {
   });
 
   console.log(`   ✅ Found ${unprocessedMessages.length} unprocessed messages`);
-  console.log(`   ℹ️  Already processed: ${processedMessageIds.size} messages`);
 
   return unprocessedMessages;
+}
+
+/**
+ * Mark messages as having notifications sent
+ */
+async function markMessagesAsNotified(
+  adminDb: Firestore,
+  messageIds: string[]
+): Promise<void> {
+  console.log(`\n📝 Marking ${messageIds.length} messages as notified...`);
+
+  const messagesRef = adminDb.collection("messages");
+  const now = new Date();
+
+  for (const messageId of messageIds) {
+    await messagesRef.doc(messageId).update({
+      notificationsSent: true,
+      notificationsSentAt: now,
+    });
+  }
+
+  console.log(`   ✅ Marked ${messageIds.length} messages as notified`);
 }
 
 /**
@@ -517,7 +528,7 @@ export async function main(): Promise<void> {
 
   const { adminDb, messaging } = await initFirebase();
 
-  // Step 1: Get unprocessed messages
+  // Step 1: Get unprocessed messages (messages without notificationsSent flag)
   const unprocessedMessages = await getUnprocessedMessages(adminDb);
 
   if (unprocessedMessages.length === 0) {
@@ -530,6 +541,11 @@ export async function main(): Promise<void> {
 
   if (interests.length === 0) {
     console.log("\n✨ No user interests configured");
+    // Still mark messages as processed so we don't reprocess them
+    const messageIds = unprocessedMessages
+      .map((m) => m.id)
+      .filter((id): id is string => !!id);
+    await markMessagesAsNotified(adminDb, messageIds);
     return;
   }
 
@@ -541,6 +557,11 @@ export async function main(): Promise<void> {
 
   if (matches.length === 0) {
     console.log("\n✨ No matches found");
+    // Still mark messages as processed
+    const messageIds = unprocessedMessages
+      .map((m) => m.id)
+      .filter((id): id is string => !!id);
+    await markMessagesAsNotified(adminDb, messageIds);
     return;
   }
 
@@ -555,11 +576,22 @@ export async function main(): Promise<void> {
 
   if (unnotifiedMatches.length === 0) {
     console.log("\n✨ No unnotified matches to send");
+    // Mark messages as processed
+    const messageIds = unprocessedMessages
+      .map((m) => m.id)
+      .filter((id): id is string => !!id);
+    await markMessagesAsNotified(adminDb, messageIds);
     return;
   }
 
   // Step 7: Send notifications
   await sendNotifications(adminDb, messaging, unnotifiedMatches);
+
+  // Step 8: Mark messages as having notifications sent
+  const messageIds = unprocessedMessages
+    .map((m) => m.id)
+    .filter((id): id is string => !!id);
+  await markMessagesAsNotified(adminDb, messageIds);
 
   console.log("\n✅ Notification processing complete!\n");
 }
