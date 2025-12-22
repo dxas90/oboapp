@@ -15,6 +15,68 @@ vi.mock("@/lib/messageIngest", () => ({
   messageIngest: vi.fn(),
 }));
 
+// Mock the boundary-utils module
+vi.mock("@/lib/boundary-utils", () => ({
+  loadOborichteBoundary: vi.fn(() => ({
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [
+              [23.3, 42.68],
+              [23.36, 42.68],
+              [23.36, 42.72],
+              [23.3, 42.72],
+              [23.3, 42.68],
+            ],
+          ],
+        },
+        properties: {},
+      },
+    ],
+  })),
+  isWithinBoundaries: vi.fn(() => true), // Always return true for tests
+}));
+
+// Helper to create mock GeoJSON for testing
+const createMockGeoJson = () => ({
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [23.3394, 42.7035],
+      },
+      properties: {},
+    },
+  ],
+});
+
+// Helper to create Firebase mock structure
+const setupFirebaseMock = async (mockMessages: any[]) => {
+  const { adminDb } = await import("@/lib/firebase-admin");
+
+  const mockSnapshot = {
+    forEach: vi.fn((callback) => {
+      mockMessages.forEach((doc) => callback(doc));
+    }),
+  };
+
+  const mockQuery = {
+    get: vi.fn().mockResolvedValue(mockSnapshot),
+  };
+
+  const mockCollection = {
+    orderBy: vi.fn().mockReturnValue(mockQuery),
+  };
+
+  vi.mocked(adminDb.collection).mockReturnValue(mockCollection as any);
+};
+
 describe("GET /api/messages - Date Filtering", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -23,8 +85,6 @@ describe("GET /api/messages - Date Filtering", () => {
   });
 
   it("should filter out messages with all timespans expired", async () => {
-    const { adminDb } = await import("@/lib/firebase-admin");
-
     // Create mock data - one message with expired timespans, one with current
     const mockMessages = [
       {
@@ -43,6 +103,7 @@ describe("GET /api/messages - Date Filtering", () => {
             ],
             streets: [],
           }),
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: new Date("2024-01-01").getTime() / 1000 },
         }),
       },
@@ -62,26 +123,13 @@ describe("GET /api/messages - Date Filtering", () => {
             ],
             streets: [],
           }),
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: new Date("2025-12-19").getTime() / 1000 },
         }),
       },
     ];
 
-    const mockSnapshot = {
-      forEach: vi.fn((callback) => {
-        mockMessages.forEach((doc) => callback(doc));
-      }),
-    };
-
-    const mockQuery = {
-      get: vi.fn().mockResolvedValue(mockSnapshot),
-    };
-
-    const mockCollection = {
-      orderBy: vi.fn().mockReturnValue(mockQuery),
-    };
-
-    vi.mocked(adminDb.collection).mockReturnValue(mockCollection as any);
+    await setupFirebaseMock(mockMessages);
 
     const response = await GET();
     const data = await response.json();
@@ -91,8 +139,6 @@ describe("GET /api/messages - Date Filtering", () => {
   });
 
   it("should show messages without timespans if they are within MESSAGE_RELEVANCE_DAYS", async () => {
-    const { adminDb } = await import("@/lib/firebase-admin");
-
     // Set relevance to 30 days
     process.env.MESSAGE_RELEVANCE_DAYS = "30";
 
@@ -107,6 +153,7 @@ describe("GET /api/messages - Date Filtering", () => {
         id: "msg1",
         data: () => ({
           text: "Recent message without timespans",
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: recentDate.getTime() / 1000 },
         }),
       },
@@ -114,26 +161,13 @@ describe("GET /api/messages - Date Filtering", () => {
         id: "msg2",
         data: () => ({
           text: "Old message without timespans",
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: oldDate.getTime() / 1000 },
         }),
       },
     ];
 
-    const mockSnapshot = {
-      forEach: vi.fn((callback) => {
-        mockMessages.forEach((doc) => callback(doc));
-      }),
-    };
-
-    const mockQuery = {
-      get: vi.fn().mockResolvedValue(mockSnapshot),
-    };
-
-    const mockCollection = {
-      orderBy: vi.fn().mockReturnValue(mockQuery),
-    };
-
-    vi.mocked(adminDb.collection).mockReturnValue(mockCollection as any);
+    await setupFirebaseMock(mockMessages);
 
     const response = await GET();
     const data = await response.json();
@@ -143,8 +177,6 @@ describe("GET /api/messages - Date Filtering", () => {
   });
 
   it("should show message if at least one timespan is still relevant", async () => {
-    const { adminDb } = await import("@/lib/firebase-admin");
-
     const mockMessages = [
       {
         id: "msg1",
@@ -171,26 +203,13 @@ describe("GET /api/messages - Date Filtering", () => {
               },
             ],
           }),
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: new Date("2024-01-01").getTime() / 1000 },
         }),
       },
     ];
 
-    const mockSnapshot = {
-      forEach: vi.fn((callback) => {
-        mockMessages.forEach((doc) => callback(doc));
-      }),
-    };
-
-    const mockQuery = {
-      get: vi.fn().mockResolvedValue(mockSnapshot),
-    };
-
-    const mockCollection = {
-      orderBy: vi.fn().mockReturnValue(mockQuery),
-    };
-
-    vi.mocked(adminDb.collection).mockReturnValue(mockCollection as any);
+    await setupFirebaseMock(mockMessages);
 
     const response = await GET();
     const data = await response.json();
@@ -200,8 +219,6 @@ describe("GET /api/messages - Date Filtering", () => {
   });
 
   it("should use default 7 days when MESSAGE_RELEVANCE_DAYS is not set", async () => {
-    const { adminDb } = await import("@/lib/firebase-admin");
-
     const date5DaysAgo = new Date();
     date5DaysAgo.setDate(date5DaysAgo.getDate() - 5);
 
@@ -210,26 +227,13 @@ describe("GET /api/messages - Date Filtering", () => {
         id: "msg1",
         data: () => ({
           text: "Message from 5 days ago",
+          geoJson: JSON.stringify(createMockGeoJson()),
           createdAt: { _seconds: date5DaysAgo.getTime() / 1000 },
         }),
       },
     ];
 
-    const mockSnapshot = {
-      forEach: vi.fn((callback) => {
-        mockMessages.forEach((doc) => callback(doc));
-      }),
-    };
-
-    const mockQuery = {
-      get: vi.fn().mockResolvedValue(mockSnapshot),
-    };
-
-    const mockCollection = {
-      orderBy: vi.fn().mockReturnValue(mockQuery),
-    };
-
-    vi.mocked(adminDb.collection).mockReturnValue(mockCollection as any);
+    await setupFirebaseMock(mockMessages);
 
     const response = await GET();
     const data = await response.json();
