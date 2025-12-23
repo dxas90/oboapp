@@ -17,7 +17,7 @@ vi.mock("@/lib/messageIngest", () => ({
 
 // Mock the boundary-utils module
 vi.mock("@/lib/boundary-utils", () => ({
-  loadOborichteBoundary: vi.fn(() => ({
+  loadOborishteBoundary: vi.fn().mockReturnValue({
     type: "FeatureCollection",
     features: [
       {
@@ -37,7 +37,7 @@ vi.mock("@/lib/boundary-utils", () => ({
         properties: {},
       },
     ],
-  })),
+  }),
   isWithinBoundaries: vi.fn(() => true), // Always return true for tests
 }));
 
