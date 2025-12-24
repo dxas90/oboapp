@@ -81,7 +81,18 @@ export default function HomeContent() {
       const data = await response.json();
       setMessages(data.messages || []);
     } catch (err) {
-      setError("Не успях да заредя сигналите. Презареди страницата.");
+      // Check if it's a network error (offline)
+      if (!navigator.onLine) {
+        setError(
+          "Няма интернет връзка. Моля, свържете се към интернет и презаредете страницата."
+        );
+      } else if (err instanceof TypeError && err.message.includes("fetch")) {
+        setError(
+          "Не успях да заредя сигналите. Проверете интернет връзката си и презаредете страницата."
+        );
+      } else {
+        setError("Не успях да заредя сигналите. Презареди страницата.");
+      }
       console.error("Error fetching messages:", err);
     } finally {
       setIsLoading(false);

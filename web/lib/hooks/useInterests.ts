@@ -83,7 +83,14 @@ export function useInterests() {
       setInterests(deduped);
     } catch (err) {
       console.error("Error fetching interests:", err);
-      setError(err instanceof Error ? err.message : "Failed to load interests");
+      // Check if offline
+      if (!navigator.onLine) {
+        setError("Няма интернет връзка. Моля, свържете се към интернет.");
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to load interests"
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -135,6 +142,12 @@ export function useInterests() {
         return data.interest;
       } catch (err) {
         console.error("Error adding interest:", err);
+        // Provide helpful error message for offline state
+        if (!navigator.onLine) {
+          throw new Error(
+            "Няма интернет връзка. Моля, свържете се към интернет и опитайте отново."
+          );
+        }
         throw err;
       }
     },
@@ -182,6 +195,12 @@ export function useInterests() {
         return data.interest;
       } catch (err) {
         console.error("Error updating interest:", err);
+        // Provide helpful error message for offline state
+        if (!navigator.onLine) {
+          throw new Error(
+            "Няма интернет връзка. Моля, свържете се към интернет и опитайте отново."
+          );
+        }
         throw err;
       }
     },
@@ -221,6 +240,12 @@ export function useInterests() {
         setInterests((prev) => prev.filter((interest) => interest.id !== id));
       } catch (err) {
         console.error("Error deleting interest:", err);
+        // Provide helpful error message for offline state
+        if (!navigator.onLine) {
+          throw new Error(
+            "Няма интернет връзка. Моля, свържете се към интернет и опитайте отново."
+          );
+        }
         throw err;
       }
     },

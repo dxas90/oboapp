@@ -69,6 +69,10 @@ export async function hasValidSubscription(userId: string): Promise<boolean> {
     return data.hasSubscription === true;
   } catch (error) {
     console.error("Error checking subscription:", error);
+    // If offline, assume we don't have a valid subscription
+    if (!navigator.onLine) {
+      console.warn("Cannot check subscription while offline");
+    }
     return false;
   }
 }
@@ -123,6 +127,10 @@ export async function subscribeToPushNotifications(
     return subscription;
   } catch (error) {
     console.error("Error subscribing to push notifications:", error);
+    // Check if offline
+    if (!navigator.onLine) {
+      console.error("Cannot subscribe to notifications while offline");
+    }
     return null;
   }
 }
