@@ -36,10 +36,10 @@ const OBORISHTE_CENTER = {
   lng: 23.3341,
 };
 
-// Oborishte District bounds (calculated from oborishte.geojson)
+// Bounds to restrict map panning
 const OBORISHTE_BOUNDS = {
   north: 42.72,
-  south: 42.68,
+  south: 42.67,
   east: 23.37,
   west: 23.31,
 };
