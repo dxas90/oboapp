@@ -2,16 +2,17 @@ import { GoogleGenAI } from "@google/genai";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ExtractedData } from "./types";
-import { getDataExtractionPromptPath } from "./config";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_AI_API_KEY || "" });
 
-// Read the appropriate prompt template based on geocoding algorithm
+// Read the data extraction prompt template
+// Uses Overpass-optimized prompt for hybrid geocoding (Google for pins, Overpass for streets)
 let systemInstruction: string;
 try {
-  const promptPath = getDataExtractionPromptPath();
-
-  systemInstruction = readFileSync(join(process.cwd(), promptPath), "utf-8");
+  systemInstruction = readFileSync(
+    join(process.cwd(), "prompts/data-extraction-overpass.md"),
+    "utf-8"
+  );
 } catch (error) {
   console.error("Failed to load prompt template:", error);
   throw new Error("Prompt template file not found");
