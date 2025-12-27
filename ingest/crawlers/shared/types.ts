@@ -5,6 +5,7 @@ export interface BaseSourceDocument {
   message: string;
   sourceType: string;
   crawledAt: Date;
+  markdownText?: string; // Optional markdown-formatted message for display
 }
 
 export interface SourceDocumentWithGeoJson extends BaseSourceDocument {

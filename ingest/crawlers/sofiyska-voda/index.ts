@@ -198,7 +198,8 @@ function buildMessage(
   ].filter(Boolean);
 
   if (metadata.length) {
-    paragraphs.push(metadata.join("\n"));
+    // Use 2 spaces + newline for proper markdown hard line breaks
+    paragraphs.push(metadata.join("  \n"));
   }
 
   return paragraphs.join("\n\n");
@@ -321,6 +322,7 @@ function buildSourceDocument(
     datePublished: lastUpdate.toISOString(),
     title: buildTitle(feature.attributes, layer),
     message,
+    markdownText: message, // Store markdown in markdownText field
     sourceType: SOURCE_TYPE,
     crawledAt: new Date(),
     geoJson,

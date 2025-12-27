@@ -9,6 +9,7 @@ import SourceDisplay from "./Source";
 import Locations from "./Locations";
 import Addresses from "./Addresses";
 import DetailItem from "./DetailItem";
+import MessageText from "./MessageText";
 
 interface MessageDetailViewProps {
   readonly message: Message | null;
@@ -148,9 +149,10 @@ export default function MessageDetailView({
           )}
 
           <DetailItem title="Текст">
-            <p className="text-base text-gray-900 whitespace-pre-wrap">
-              {message.text}
-            </p>
+            <MessageText
+              text={message.text}
+              markdownText={message.extractedData?.markdown_text}
+            />
           </DetailItem>
 
           {message.extractedData?.responsible_entity && (

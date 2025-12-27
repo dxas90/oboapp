@@ -17,6 +17,7 @@ interface SourceDocument {
   sourceType: string;
   crawledAt: Date;
   geoJson?: string | GeoJSONFeatureCollection; // Can be stored as string in Firestore
+  markdownText?: string; // Markdown-formatted message for display
 }
 
 interface IngestOptions {
@@ -160,6 +161,7 @@ async function ingestSource(
       sourceUrl: source.url,
       boundaryFilter: boundaries ?? undefined,
       crawledAt: source.crawledAt,
+      markdownText: source.markdownText,
     }
   );
 

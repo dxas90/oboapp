@@ -45,6 +45,7 @@ export interface ExtractedData {
   responsible_entity: string;
   pins: Pin[];
   streets: StreetSection[];
+  markdown_text?: string;
 }
 
 // GeoJSON Types

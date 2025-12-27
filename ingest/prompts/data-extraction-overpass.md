@@ -41,7 +41,8 @@ You must return ONLY a single, valid JSON object. Do not include any explanation
         }
       ]
     }
-  ]
+  ],
+  "markdown_text": "string"
 }
 ```
 
@@ -90,6 +91,23 @@ An array of objects representing street **sections** affected between two distin
 An array of all date and time ranges associated with a location.
 
 - **Format**: Each object must have a `start` and `end` key with the value in `DD.MM.YYYY HH:MM` format.
+
+## `markdown_text` (string)
+
+A markdown-formatted version of the original announcement text for improved display.
+
+- **Purpose**: Enhance readability and presentation while preserving all original content.
+- **Requirements**:
+  - Use markdown formatting: headings (# ## ###), **bold**, _italic_, lists (- or 1.), paragraphs, and line breaks.
+  - Preserve ALL original content exactly - do not add information, do not omit information.
+  - Structure the content logically with appropriate headings and emphasis.
+  - Use bold for important terms like dates, locations, responsible entities.
+  - Break up long paragraphs for better readability.
+- **Example transformations**:
+  - Entity names → **Топлофикация София ЕАД**
+  - Dates → **от 08:00 до 18:00 на 25.12.2025 г.**
+  - Section headers → ### Ограничения на движението
+  - Lists of locations → markdown bullet lists
 
 # Key Differences for Overpass
 

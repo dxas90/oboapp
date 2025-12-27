@@ -40,6 +40,10 @@ export interface MessageIngestOptions {
    * Optional crawledAt timestamp from the source document
    */
   crawledAt?: Date;
+  /**
+   * Optional markdown-formatted text for display (when crawler produces markdown)
+   */
+  markdownText?: string;
 }
 
 /**
@@ -111,6 +115,15 @@ export async function messageIngest(
       extractedData,
       preGeocodedMap
     );
+  } else if (options.markdownText) {
+    // When using precomputed GeoJSON, still store markdown_text if provided
+    extractedData = {
+      responsible_entity: "",
+      pins: [],
+      streets: [],
+      markdown_text: options.markdownText,
+    };
+    await storeAddressesInMessage(messageId, extractedData);
   }
 
   // Step 6.5: Apply boundary filtering if provided
