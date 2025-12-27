@@ -103,7 +103,7 @@ export default function HomeContent() {
 
   // Check if user has zones but no subscriptions
   useEffect(() => {
-    if (!user || interests.length === 0 || hasCheckedSubscriptions) {
+    if (!user || interests.length === 0 || hasCheckedSubscriptions || showPrompt) {
       return;
     }
 
@@ -129,7 +129,7 @@ export default function HomeContent() {
     };
 
     checkSubscriptions();
-  }, [user, interests.length, hasCheckedSubscriptions]);
+  }, [user, interests.length, hasCheckedSubscriptions, showPrompt]);
 
   const fetchMessages = useCallback(async () => {
     try {
