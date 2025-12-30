@@ -1,5 +1,83 @@
 import { describe, expect, it } from "vitest";
-import { formatBulgarianDateTime, parseBulgarianDateTime } from "./date-utils";
+import {
+  formatBulgarianDateTime,
+  parseBulgarianDate,
+  parseBulgarianDateTime,
+} from "./date-utils";
+
+describe("parseBulgarianDate", () => {
+  it("should parse date with dot separator (DD.MM.YYYY)", () => {
+    const isoDate = parseBulgarianDate("29.12.2025");
+
+    const date = new Date(isoDate);
+    expect(date.getDate()).toBe(29);
+    expect(date.getMonth()).toBe(11); // December (0-indexed)
+    expect(date.getFullYear()).toBe(2025);
+  });
+
+  it("should parse date with slash separator (DD/MM/YYYY)", () => {
+    const isoDate = parseBulgarianDate("29/12/2025");
+
+    const date = new Date(isoDate);
+    expect(date.getDate()).toBe(29);
+    expect(date.getMonth()).toBe(11); // December
+    expect(date.getFullYear()).toBe(2025);
+  });
+
+  it("should parse date with leading zeros", () => {
+    const isoDate = parseBulgarianDate("01.01.2025");
+
+    const date = new Date(isoDate);
+    expect(date.getDate()).toBe(1);
+    expect(date.getMonth()).toBe(0); // January
+    expect(date.getFullYear()).toBe(2025);
+  });
+
+  it("should parse date with slash and leading zeros", () => {
+    const isoDate = parseBulgarianDate("05/03/2025");
+
+    const date = new Date(isoDate);
+    expect(date.getDate()).toBe(5);
+    expect(date.getMonth()).toBe(2); // March
+    expect(date.getFullYear()).toBe(2025);
+  });
+
+  it("should return current date ISO string for invalid format", () => {
+    const before = new Date();
+    const isoDate = parseBulgarianDate("invalid-date");
+    const after = new Date();
+
+    const parsed = new Date(isoDate);
+    expect(parsed.getTime()).toBeGreaterThanOrEqual(before.getTime());
+    expect(parsed.getTime()).toBeLessThanOrEqual(after.getTime());
+  });
+
+  it("should return current date ISO string for empty string", () => {
+    const before = new Date();
+    const isoDate = parseBulgarianDate("");
+    const after = new Date();
+
+    const parsed = new Date(isoDate);
+    expect(parsed.getTime()).toBeGreaterThanOrEqual(before.getTime());
+    expect(parsed.getTime()).toBeLessThanOrEqual(after.getTime());
+  });
+
+  it("should handle mixed separators by normalizing to dots", () => {
+    const isoDate = parseBulgarianDate("15/06/2025");
+
+    const date = new Date(isoDate);
+    expect(date.getDate()).toBe(15);
+    expect(date.getMonth()).toBe(5); // June
+    expect(date.getFullYear()).toBe(2025);
+  });
+
+  it("should return ISO string format", () => {
+    const isoDate = parseBulgarianDate("29.12.2025");
+
+    // ISO string should match YYYY-MM-DDTHH:mm:ss.sssZ format
+    expect(isoDate).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
+  });
+});
 
 describe("parseBulgarianDateTime", () => {
   it("should parse valid Bulgarian date format", () => {

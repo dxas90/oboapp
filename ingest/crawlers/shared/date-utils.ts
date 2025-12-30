@@ -1,10 +1,12 @@
 /**
- * Parse Bulgarian date format (DD.MM.YYYY) to ISO string
+ * Parse Bulgarian date format (DD.MM.YYYY or DD/MM/YYYY) to ISO string
  */
 export function parseBulgarianDate(dateStr: string): string {
   try {
-    // Format: "19.12.2025" or "15.12.2025"
-    const parts = dateStr.trim().split(".");
+    // Format: "19.12.2025" or "19/12/2025"
+    // Handle both dot and slash separators
+    const normalized = dateStr.trim().replace(/\//g, ".");
+    const parts = normalized.split(".");
     if (parts.length === 3) {
       const [day, month, year] = parts;
       const date = new Date(`${year}-${month}-${day}`);
