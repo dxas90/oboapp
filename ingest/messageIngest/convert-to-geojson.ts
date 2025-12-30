@@ -48,19 +48,38 @@ export async function convertMessageGeocodingToGeoJson(
     preGeocodedMap
   );
 
-  if (missingAddresses.length > 0) {
+  // Filter out features with missing geocoding
+  const filteredData: ExtractedData = {
+    ...extractedData,
+    pins: extractedData.pins.filter((pin) => preGeocodedMap.has(pin.address)),
+    streets: extractedData.streets.filter(
+      (street) =>
+        preGeocodedMap.has(street.from) && preGeocodedMap.has(street.to)
+    ),
+  };
+
+  // Check if we have ANY features to display
+  const hasFeatures =
+    filteredData.pins.length > 0 || filteredData.streets.length > 0;
+
+  if (!hasFeatures) {
     console.error(
-      `Missing geocoded coordinates for ${missingAddresses.length} addresses:`,
-      missingAddresses
+      `❌ No geocoded features available (all ${missingAddresses.length} addresses failed)`
     );
     throw new Error(
-      `Failed to geocode ${
-        missingAddresses.length
-      } addresses: ${missingAddresses.join(", ")}`
+      `Failed to geocode all addresses: ${missingAddresses.join(", ")}`
     );
   }
 
-  const geoJson = await convertToGeoJSON(extractedData, preGeocodedMap);
+  // Log partial failures as warnings
+  if (missingAddresses.length > 0) {
+    console.warn(
+      `⚠️  Partial geocoding: ${missingAddresses.length} addresses failed (showing ${filteredData.pins.length} pins + ${filteredData.streets.length} streets):`,
+      missingAddresses
+    );
+  }
+
+  const geoJson = await convertToGeoJSON(filteredData, preGeocodedMap);
 
   // Validate the generated geoJson
   if (geoJson) {

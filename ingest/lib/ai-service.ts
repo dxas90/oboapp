@@ -66,6 +66,7 @@ export async function filterMessage(
       contents: text,
       config: {
         systemInstruction: filterSystemInstruction,
+        responseMimeType: "application/json",
       },
     });
     const responseText = response.text || "";
@@ -91,6 +92,8 @@ export async function filterMessage(
         };
       } catch (parseError) {
         console.error("Failed to parse JSON response from AI:", parseError);
+        console.error("Raw JSON that failed to parse:", jsonMatch[0]);
+        console.error("Full AI response:", responseText);
         return null;
       }
     }
@@ -136,6 +139,7 @@ export async function extractStructuredData(
       contents: sanitizedText,
       config: {
         systemInstruction: extractionSystemInstruction,
+        responseMimeType: "application/json",
       },
     });
     const responseText = response.text || "";
@@ -206,6 +210,8 @@ export async function extractStructuredData(
         return extractedData;
       } catch (parseError) {
         console.error("Failed to parse JSON response from AI:", parseError);
+        console.error("Raw JSON that failed to parse:", jsonMatch[0]);
+        console.error("Full AI response:", responseText);
         return null;
       }
     }

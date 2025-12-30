@@ -1,6 +1,13 @@
-import { describe, it, expect } from "vitest";
-import { validateAllAddressesGeocoded } from "./convert-to-geojson";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import {
+  validateAllAddressesGeocoded,
+  convertMessageGeocodingToGeoJson,
+} from "./convert-to-geojson";
 import type { ExtractedData } from "@/lib/types";
+
+// Mock dependencies
+vi.mock("@/lib/geojson-service");
+vi.mock("../crawlers/shared/geojson-validation");
 
 describe(validateAllAddressesGeocoded, () => {
   it("should return empty array when all addresses are geocoded", () => {
@@ -180,5 +187,131 @@ describe(validateAllAddressesGeocoded, () => {
       "Main Street from: Corner A",
       "Main Street to: Corner B",
     ]);
+  });
+});
+
+describe("convertMessageGeocodingToGeoJson", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it("should succeed with partial geocoding if at least one feature is available", async () => {
+    const { convertToGeoJSON } = await import("@/lib/geojson-service");
+    const { validateAndFixGeoJSON } = await import(
+      "../crawlers/shared/geojson-validation"
+    );
+
+    const extractedData: ExtractedData = {
+      responsible_entity: "Test",
+      pins: [
+        { address: "Address 1", timespans: [] },
+        { address: "Address 2", timespans: [] }, // Missing geocoding
+      ],
+      streets: [
+        { street: "Main St", from: "A", to: "B", timespans: [] },
+        { street: "Side St", from: "C", to: "D", timespans: [] }, // Missing D
+      ],
+      markdown_text: "Test",
+    };
+
+    const geocodedMap = new Map([
+      ["Address 1", { lat: 42, lng: 23 }],
+      ["A", { lat: 42.1, lng: 23.1 }],
+      ["B", { lat: 42.2, lng: 23.2 }],
+      ["C", { lat: 42.3, lng: 23.3 }],
+    ]);
+
+    const mockGeoJson = {
+      type: "FeatureCollection" as const,
+      features: [],
+    };
+
+    vi.mocked(convertToGeoJSON).mockResolvedValue(mockGeoJson);
+    vi.mocked(validateAndFixGeoJSON).mockReturnValue({
+      isValid: true,
+      geoJson: mockGeoJson,
+      errors: [],
+      warnings: [],
+      fixedCoordinates: false,
+    });
+
+    const result = await convertMessageGeocodingToGeoJson(
+      extractedData,
+      geocodedMap
+    );
+
+    expect(result).toEqual(mockGeoJson);
+    // Should only pass geocoded features
+    expect(vi.mocked(convertToGeoJSON)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pins: [{ address: "Address 1", timespans: [] }],
+        streets: [{ street: "Main St", from: "A", to: "B", timespans: [] }],
+      }),
+      geocodedMap
+    );
+  });
+
+  it("should throw error if no features can be geocoded", async () => {
+    const extractedData: ExtractedData = {
+      responsible_entity: "Test",
+      pins: [{ address: "Address 1", timespans: [] }],
+      streets: [{ street: "Main St", from: "A", to: "B", timespans: [] }],
+      markdown_text: "Test",
+    };
+
+    const geocodedMap = new Map(); // Empty - nothing geocoded
+
+    await expect(
+      convertMessageGeocodingToGeoJson(extractedData, geocodedMap)
+    ).rejects.toThrow("Failed to geocode all addresses");
+  });
+
+  it("should handle all pins geocoded but streets missing endpoints", async () => {
+    const { convertToGeoJSON } = await import("@/lib/geojson-service");
+    const { validateAndFixGeoJSON } = await import(
+      "../crawlers/shared/geojson-validation"
+    );
+
+    const extractedData: ExtractedData = {
+      responsible_entity: "Test",
+      pins: [{ address: "Address 1", timespans: [] }],
+      streets: [{ street: "Main St", from: "A", to: "B", timespans: [] }],
+      markdown_text: "Test",
+    };
+
+    const geocodedMap = new Map([
+      ["Address 1", { lat: 42, lng: 23 }],
+      ["A", { lat: 42.1, lng: 23.1 }],
+      // Missing B
+    ]);
+
+    const mockGeoJson = {
+      type: "FeatureCollection" as const,
+      features: [],
+    };
+
+    vi.mocked(convertToGeoJSON).mockResolvedValue(mockGeoJson);
+    vi.mocked(validateAndFixGeoJSON).mockReturnValue({
+      isValid: true,
+      geoJson: mockGeoJson,
+      errors: [],
+      warnings: [],
+      fixedCoordinates: false,
+    });
+
+    const result = await convertMessageGeocodingToGeoJson(
+      extractedData,
+      geocodedMap
+    );
+
+    expect(result).toEqual(mockGeoJson);
+    // Should include pin but exclude street with missing endpoint
+    expect(vi.mocked(convertToGeoJSON)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pins: [{ address: "Address 1", timespans: [] }],
+        streets: [],
+      }),
+      geocodedMap
+    );
   });
 });
