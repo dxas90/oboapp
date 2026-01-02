@@ -24,7 +24,7 @@ FROM node:20-slim
 
 WORKDIR /app
 
-# Install system dependencies for Playwright/Chromium
+# Install system dependencies for Playwright/Chromium including fonts
 RUN apt-get update && apt-get install -y \
     libnss3 \
     libnspr4 \
@@ -42,6 +42,11 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     libatspi2.0-0 \
     libxshmfence1 \
+    fonts-liberation \
+    fonts-noto-color-emoji \
+    fonts-noto-cjk \
+    fonts-dejavu-core \
+    fonts-freefont-ttf \
     && rm -rf /var/lib/apt/lists/*
 
 # Install only production dependencies
