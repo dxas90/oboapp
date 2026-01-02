@@ -110,7 +110,7 @@ locals {
     rayon-oborishte = {
       source       = "rayon-oborishte-bg"
       schedule     = var.schedules.crawl_rayon_oborishte
-      memory       = "512Mi"
+      memory       = "1Gi"
       timeout      = "1800s"
       description  = "Crawl Rayon Oborishte website"
     }
@@ -141,6 +141,13 @@ locals {
       memory       = "512Mi"
       timeout      = "1800s"
       description  = "Crawl ERM-Zapad power outages"
+    }
+    mladost = {
+      source       = "mladost-bg"
+      schedule     = var.schedules.crawl_mladost
+      memory       = "1Gi"
+      timeout      = "1800s"
+      description  = "Crawl Mladost district"
     }
   }
 }
