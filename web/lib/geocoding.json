@@ -1,0 +1,17 @@
+[
+  {
+    "id": "google-maps",
+    "url": "https://maps.google.com",
+    "name": "Google Maps"
+  },
+  {
+    "id": "bulgarian-cadastre",
+    "url": "https://kais.cadastre.bg",
+    "name": "Българска Кадастрална Агенция"
+  },
+  {
+    "id": "openstreetmap",
+    "url": "https://www.openstreetmap.org",
+    "name": "OpenStreetMap"
+  }
+]

@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import sources from "@/lib/sources.json";
+import geocodingSources from "@/lib/geocoding.json";
 import SourceCard from "@/components/SourceCard";
+import GeocodingSourceCard from "@/components/GeocodingSourceCard";
 
 export const metadata: Metadata = {
   title: "Източници - OboApp",
@@ -18,6 +20,19 @@ export default function SourcesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {sources.map((source) => (
             <SourceCard key={source.id} source={source} />
+          ))}
+        </div>
+
+        <h2
+          className="text-2xl font-semibold text-gray-900 mb-6 mt-12"
+          lang="en"
+        >
+          Geocoding
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {geocodingSources.map((source) => (
+            <GeocodingSourceCard key={source.id} source={source} />
           ))}
         </div>
       </div>

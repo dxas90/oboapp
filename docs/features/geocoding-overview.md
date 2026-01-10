@@ -4,6 +4,8 @@
 
 The geocoding system converts location descriptions from infrastructure announcements into map coordinates using three specialized services. Each service handles a specific type of location data: Google API for specific addresses, OpenStreetMap/Overpass for street intersections, and Bulgarian Cadastre for property identifiers (УПИ).
 
+These geocoding services are publicly acknowledged on the [sources page](/sources) in the "Geocoding" section.
+
 **Core Behavior**: A message stating "ул. Иван Вазов 15, между бул. Витоша и ул. Граф Игнатиев, УПИ 68134.1601.6124" triggers all three geocoding services to map the pin location, street section, and property boundary.
 
 ## Architecture
