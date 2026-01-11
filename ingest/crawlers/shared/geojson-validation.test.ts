@@ -5,8 +5,8 @@ import {
   isWithinSofia,
   detectSwappedCoordinates,
   fixSwappedCoordinates,
-  SOFIA_BOUNDS,
 } from "./geojson-validation";
+import { SOFIA_BOUNDS } from "@/lib/bounds";
 
 describe("geojson-validation", () => {
   describe("isValidCoordinate", () => {

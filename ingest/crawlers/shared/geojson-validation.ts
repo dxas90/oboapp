@@ -5,15 +5,20 @@ import type {
   GeoJSONPoint,
   GeoJSONLineString,
   GeoJSONPolygon,
-} from "../../lib/types";
+} from "@/lib/types";
+import { SOFIA_BOUNDS } from "@/lib/bounds";
 
-// Sofia bounds for coordinate validation
-export const SOFIA_BOUNDS = {
-  south: 42.605,
-  west: 23.188,
-  north: 42.83,
-  east: 23.528,
-};
+/**
+ * Check if coordinates are within Sofia bounds
+ */
+export function isWithinSofia(lat: number, lng: number): boolean {
+  return (
+    lat >= SOFIA_BOUNDS.south &&
+    lat <= SOFIA_BOUNDS.north &&
+    lng >= SOFIA_BOUNDS.west &&
+    lng <= SOFIA_BOUNDS.east
+  );
+}
 
 export interface ValidationResult {
   isValid: boolean;
@@ -34,18 +39,6 @@ export function isValidCoordinate(lng: number, lat: number): boolean {
     lng <= 180 &&
     lat >= -90 &&
     lat <= 90
-  );
-}
-
-/**
- * Check if coordinates are within Sofia bounds
- */
-export function isWithinSofia(lat: number, lng: number): boolean {
-  return (
-    lat >= SOFIA_BOUNDS.south &&
-    lat <= SOFIA_BOUNDS.north &&
-    lng >= SOFIA_BOUNDS.west &&
-    lng <= SOFIA_BOUNDS.east
   );
 }
 
