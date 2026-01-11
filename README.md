@@ -53,3 +53,7 @@ See [web/](web) for details.
 ## Style
 
 Documentation is written for technical stakeholders, system administrators, and QA personnel who need to understand system behavior and configuration. Focus is on facts and behavior rather than implementation details, with diagrams for complex flows and practical configuration guidance. We keep it short and informative. We avoid excessive explanations of topics that are standard to the industry or easy to understand.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for local development setup instructions, including Firebase and Google Cloud account configuration.
