@@ -128,13 +128,6 @@ export default function MapComponent({
       },
       minZoom: 12,
       maxZoom: 18,
-      // Enable user location tracking with blue dot
-      zoomControl: true,
-      gestureHandling: "greedy",
-      disableDefaultUI: false,
-      myLocationButtonOptions: {
-        position: google.maps.ControlPosition.TOP_RIGHT,
-      },
     }),
     [initialCenter]
   );
@@ -189,7 +182,6 @@ export default function MapComponent({
       ...mapOptions,
       center: preservedCenter,
       disableDefaultUI: true,
-      zoomControl: true,
       gestureHandling: "greedy" as google.maps.MapOptions["gestureHandling"],
     } as const;
 
