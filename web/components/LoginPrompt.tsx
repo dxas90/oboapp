@@ -24,7 +24,7 @@ export default function LoginPrompt() {
   };
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 p-4 w-full max-w-md">
+    <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-40 p-4 w-full max-w-md">
       <PromptCard
         icon={
           <svg

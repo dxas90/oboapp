@@ -29,34 +29,46 @@ export default function CookieConsent() {
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 p-4 w-full max-w-2xl">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="flex flex-col gap-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Бисквитки и поверителност
-            </h3>
-            <p className="text-sm text-gray-600 mb-2">
-              Използваме бисквитки за анализ на трафика и подобряване на
-              потребителското изживяване. Данните се обработват от Google
-              Analytics. Можете да приемете или откажете използването на
-              бисквитки.
-            </p>
-            <p className="text-xs text-gray-500">
-              Забележка: Сайтът използва също Google Maps и Firebase, които
-              могат да използват собствени бисквитки извън нашия контрол.
-            </p>
-          </div>
-          <div className="flex gap-3 justify-end">
+    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1rem)] sm:w-auto sm:max-w-4xl">
+      <div className="bg-white rounded-lg shadow-md py-1.5 px-3 sm:py-2 sm:px-4 sm:opacity-70 sm:hover:opacity-100 transition-opacity duration-200">
+        {/* Mobile compact view with icon buttons */}
+        <div className="flex sm:hidden items-center gap-2">
+          <p className="text-xs text-gray-600 flex-1">
+            Използваме бисквитки за анализ на трафика.
+          </p>
+          <div className="flex gap-1.5">
             <button
               onClick={handleDecline}
-              className={`${buttonSizes.md} font-medium ${buttonStyles.secondary} ${borderRadius.md}`}
+              className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-bold text-lg"
+              aria-label="Откажи"
+            >
+              ✕
+            </button>
+            <button
+              onClick={handleAccept}
+              className="w-8 h-8 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-lg font-bold text-lg"
+              aria-label="Приеми"
+            >
+              ✓
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop single-line view */}
+        <div className="hidden sm:flex items-center gap-4">
+          <p className="text-xs text-gray-600 flex-1">
+            Използваме бисквитки за анализ на трафика.
+          </p>
+          <div className="flex gap-2 whitespace-nowrap">
+            <button
+              onClick={handleDecline}
+              className={`${buttonSizes.sm} font-medium ${buttonStyles.secondary} ${borderRadius.md}`}
             >
               Откажи
             </button>
             <button
               onClick={handleAccept}
-              className={`${buttonSizes.md} font-medium ${buttonStyles.primary} ${borderRadius.md}`}
+              className={`${buttonSizes.sm} font-medium ${buttonStyles.primary} ${borderRadius.md}`}
             >
               Приеми
             </button>
