@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { borderRadius } from "@/lib/colors";
+import { buttonStyles, buttonSizes } from "@/lib/theme";
 
 interface AddInterestsPromptProps {
   readonly onAddInterests: () => void;
@@ -30,7 +32,7 @@ export default function AddInterestsPrompt({
       <div className="flex items-start gap-3 mb-4">
         <div className="flex-shrink-0">
           <svg
-            className="w-10 h-10 text-blue-600"
+            className="w-10 h-10 text-primary"
             fill="none"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -55,7 +57,7 @@ export default function AddInterestsPrompt({
       <div className="flex justify-end">
         <button
           onClick={handleAddInterests}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium text-sm"
+          className={`${buttonSizes.lg} ${buttonStyles.primary} ${borderRadius.md} shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium`}
         >
           <svg
             className="w-5 h-5"

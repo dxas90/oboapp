@@ -6,6 +6,8 @@ import {
   getNotificationInstructions,
   PlatformInfo,
 } from "@/lib/platform-detection";
+import { buttonStyles, buttonSizes } from "@/lib/theme";
+import { borderRadius } from "@/lib/colors";
 
 interface SubscribeDevicePromptProps {
   readonly onSubscribe: () => void;
@@ -38,7 +40,7 @@ export default function SubscribeDevicePrompt({
       </p>
 
       {platformInfo.requiresPWAInstall && (
-        <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
+        <div className="mb-3 p-3 bg-primary/10 border border-primary/20 rounded text-sm text-primary">
           <p className="font-semibold mb-2">📱 iOS Safari изисква инсталация</p>
           <p className="whitespace-pre-line">{instructions}</p>
         </div>
@@ -54,7 +56,7 @@ export default function SubscribeDevicePrompt({
       {platformInfo.supportsNotifications && (
         <button
           onClick={onSubscribe}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className={`${buttonSizes.md} ${buttonStyles.primary} ${borderRadius.md}`}
         >
           Абонирай това устройство
         </button>
