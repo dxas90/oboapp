@@ -7,6 +7,7 @@ import { Message } from "@/lib/types";
 import sources from "@/lib/sources.json";
 import { stripMarkdown } from "@/lib/markdown-utils";
 import { classifyMessage } from "@/lib/message-classification";
+import CategoryChips from "@/components/CategoryChips";
 
 interface MessageCardProps {
   readonly message: Message;
@@ -24,6 +25,13 @@ export function MessageCardSkeleton() {
           <div className="flex-1">
             <div className="h-4 bg-neutral-light rounded w-3/4"></div>
           </div>
+        </div>
+
+        {/* Categories skeleton */}
+        <div className="flex gap-2">
+          <div className="h-6 w-20 bg-neutral-light rounded-full"></div>
+          <div className="h-6 w-16 bg-neutral-light rounded-full"></div>
+          <div className="h-6 w-24 bg-neutral-light rounded-full"></div>
         </div>
 
         {/* Text snippet skeleton */}
@@ -113,7 +121,7 @@ export default function MessageCard({
   return (
     <button
       type="button"
-      className="bg-white rounded-lg shadow-md p-6 border border-neutral-border hover:shadow-lg transition-shadow cursor-pointer w-full text-left relative"
+      className="bg-white rounded-lg shadow-md p-6 border border-neutral-border hover:shadow-lg transition-shadow cursor-pointer w-full text-left relative h-full flex flex-col"
       onClick={handleClick}
     >
       {/* Status indicator circle (top-right) */}
@@ -123,63 +131,71 @@ export default function MessageCard({
         }`}
       />
 
-      <div className="space-y-4">
-        {/* Source */}
-        <div className="flex items-center space-x-3">
-          {logoPath && !logoError ? (
-            <Image
-              src={logoPath}
-              alt={sourceInfo?.name || message.source || "Source"}
-              width={40}
-              height={40}
-              className="w-10 h-10 object-contain flex-shrink-0"
-              onError={() => setLogoError(true)}
-            />
-          ) : (
-            <div className="w-10 h-10 bg-neutral-light rounded flex items-center justify-center flex-shrink-0">
-              <svg
-                className="w-6 h-6 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
+      <div className="flex flex-1 flex-col">
+        <div className="space-y-4">
+          {/* Source */}
+          <div className="flex items-center space-x-3">
+            {logoPath && !logoError ? (
+              <Image
+                src={logoPath}
+                alt={sourceInfo?.name || message.source || "Source"}
+                width={40}
+                height={40}
+                className="w-10 h-10 object-contain flex-shrink-0"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <div className="w-10 h-10 bg-neutral-light rounded flex items-center justify-center flex-shrink-0">
+                <svg
+                  className="w-6 h-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-foreground truncate">
+                {sourceInfo?.name || message.source || "Неизвестен източник"}
+              </h3>
             </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground truncate">
-              {sourceInfo?.name || message.source || "Неизвестен източник"}
-            </h3>
           </div>
+
+          {message.categories && message.categories.length > 0 && (
+            <CategoryChips categories={message.categories} />
+          )}
+
+          {/* Text snippet */}
+          <p className="text-sm text-neutral line-clamp-3">{snippet}</p>
+
+          {/* Timestamp */}
+          {formattedDate && (
+            <p className="text-xs text-neutral">{formattedDate}</p>
+          )}
         </div>
 
-        {/* Text snippet */}
-        <p className="text-sm text-neutral line-clamp-3">{snippet}</p>
-
-        {/* Timestamp */}
-        {formattedDate && (
-          <p className="text-xs text-neutral">{formattedDate}</p>
-        )}
-
         {hasIngestErrors && ingestErrors && (
-          <div className="rounded-md border border-error-border bg-error-light text-error p-3 text-xs space-y-2">
-            <p className="font-semibold">Проблеми при обработка</p>
-            <ul className="list-disc list-inside space-y-1">
-              {ingestErrors.map((ingestError, index) => (
-                <li
-                  key={`${ingestError.type}-${index}`}
-                  className="break-words"
-                >
-                  {ingestError.text}
-                </li>
-              ))}
-            </ul>
+          <div className="mt-auto pt-4">
+            <div className="rounded-md border border-error-border bg-error-light text-error p-3 text-xs space-y-2">
+              <p className="font-semibold">Проблеми при обработка</p>
+              <ul className="list-disc list-inside space-y-1">
+                {ingestErrors.map((ingestError, index) => (
+                  <li
+                    key={`${ingestError.type}-${index}`}
+                    className="break-words"
+                  >
+                    {ingestError.text}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         )}
       </div>

@@ -153,7 +153,7 @@ export default function HomeContent() {
 
       {/* Map - Takes viewport height to allow scrolling */}
       <div
-        className="relative"
+        className="relative shadow-md"
         style={{ height: "calc(100vh - 120px)", minHeight: "500px" }}
       >
         <MapContainer
