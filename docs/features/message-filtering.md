@@ -125,6 +125,8 @@ Beyond time-based relevance, several filters operate at different pipeline stage
 
 Messages that reach finalization (with or without GeoJSON) store internal ingestion issues in `ingestErrors`. Each entry has a human-readable `text` and a `type` (`warning`, `error`, or `exception`). This allows later inspection of why a message was finalized without appearing on the map.
 
+**Operational view**: The /ingest-errors page lists finalized messages missing GeoJSON and displays any recorded `ingestErrors`.
+
 ## Frontend Display
 
 Messages appear as red map features (points, lines, polygons). Clicking shows details including source, dates, locations, and timespans. The message grid below the map displays a limited number of recent items.

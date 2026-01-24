@@ -11,6 +11,7 @@ import { classifyMessage } from "@/lib/message-classification";
 interface MessageCardProps {
   readonly message: Message;
   readonly onClick: (message: Message) => void;
+  readonly showIngestErrors?: boolean;
 }
 
 export function MessageCardSkeleton() {
@@ -39,7 +40,11 @@ export function MessageCardSkeleton() {
   );
 }
 
-export default function MessageCard({ message, onClick }: MessageCardProps) {
+export default function MessageCard({
+  message,
+  onClick,
+  showIngestErrors = false,
+}: MessageCardProps) {
   const [logoError, setLogoError] = useState(false);
 
   // Classify message for status indicator
@@ -90,6 +95,8 @@ export default function MessageCard({ message, onClick }: MessageCardProps) {
   const displayText = message.markdownText || message.text;
   const snippet = createSnippet(displayText);
   const formattedDate = formatDate(message.finalizedAt);
+  const ingestErrors = showIngestErrors ? message.ingestErrors : undefined;
+  const hasIngestErrors = Boolean(ingestErrors && ingestErrors.length > 0);
 
   const handleClick = () => {
     trackEvent({
@@ -158,6 +165,22 @@ export default function MessageCard({ message, onClick }: MessageCardProps) {
         {/* Timestamp */}
         {formattedDate && (
           <p className="text-xs text-neutral">{formattedDate}</p>
+        )}
+
+        {hasIngestErrors && ingestErrors && (
+          <div className="rounded-md border border-error-border bg-error-light text-error p-3 text-xs space-y-2">
+            <p className="font-semibold">Проблеми при обработка</p>
+            <ul className="list-disc list-inside space-y-1">
+              {ingestErrors.map((ingestError, index) => (
+                <li
+                  key={`${ingestError.type}-${index}`}
+                  className="break-words"
+                >
+                  {ingestError.text}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     </button>

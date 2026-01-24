@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import CookieConsent from "@/components/CookieConsent";
 import { AuthProvider } from "@/lib/auth-context";
 import SplashScreen from "@/components/SplashScreen";
+import QueryProvider from "@/components/QueryProvider";
 
 export default function ClientLayout({
   children,
@@ -18,14 +19,16 @@ export default function ClientLayout({
         googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""}
         loadingElement={<SplashScreen />}
       >
-        <AuthProvider>
-          <Header />
-          <div className="flex-1 flex flex-col overflow-y-auto">
-            <main className="flex-1 flex flex-col">{children}</main>
-            <Footer />
-          </div>
-          <CookieConsent />
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <Header />
+            <div className="flex-1 flex flex-col overflow-y-auto">
+              <main className="flex-1 flex flex-col">{children}</main>
+              <Footer />
+            </div>
+            <CookieConsent />
+          </AuthProvider>
+        </QueryProvider>
       </LoadScript>
     </div>
   );

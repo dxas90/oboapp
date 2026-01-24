@@ -47,6 +47,8 @@ export function useMessages() {
         setIsLoading(true);
         setError(null);
 
+        // TODO: Migrate message fetching to react-query for caching and retries.
+
         // Build URL with optional categories
         let url = buildMessagesUrl(bounds);
         if (categories && categories.size > 0) {

@@ -30,6 +30,14 @@ export default function Footer() {
                   Източници на данни
                 </Link>
               </div>
+              <div>
+                <Link
+                  href="/ingest-errors"
+                  className="text-link hover:text-link-hover hover:underline"
+                >
+                  Съобщения с грешки
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -1,3 +1,10 @@
+export type IngestErrorType = "warning" | "error" | "exception";
+
+export interface IngestError {
+  text: string;
+  type: IngestErrorType;
+}
+
 export interface Message {
   id?: string;
   text: string;
@@ -5,6 +12,7 @@ export interface Message {
   addresses?: Address[];
   extractedData?: ExtractedData;
   geoJson?: GeoJSONFeatureCollection;
+  ingestErrors?: IngestError[];
   createdAt: Date | string;
   crawledAt?: Date | string;
   finalizedAt?: Date | string;

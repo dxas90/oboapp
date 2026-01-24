@@ -39,6 +39,7 @@ export default function SourcePage() {
 
   // Fetch messages for this source
   useEffect(() => {
+    // TODO: Replace manual fetch with react-query for caching and pagination.
     const fetchMessages = async () => {
       setIsLoading(true);
       try {
