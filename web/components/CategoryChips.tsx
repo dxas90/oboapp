@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CATEGORY_LABELS, Category } from "@/lib/category-constants";
+import { Category } from "@/lib/category-constants";
+import { useCategoryLabels } from "@/lib/hooks/useCategoryLabels";
 
 interface CategoryChipsProps {
   readonly categories?: string[];
   readonly className?: string;
-}
-
-function isCategory(value: string): value is Category {
-  return value in CATEGORY_LABELS;
 }
 
 export default function CategoryChips({
@@ -20,6 +17,7 @@ export default function CategoryChips({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { getCategoryLabel } = useCategoryLabels();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -81,7 +79,7 @@ export default function CategoryChips({
               });
             }}
           >
-            {isCategory(category) ? CATEGORY_LABELS[category] : category}
+            {getCategoryLabel(category as Category)}
           </span>
         ))}
       </div>

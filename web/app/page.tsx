@@ -1,11 +1,7 @@
-import { Suspense } from "react";
-import HomeContent from "@/components/HomeContent";
-import SplashScreen from "@/components/SplashScreen";
+import { redirect } from "next/navigation";
+import { defaultLocale } from "@/i18n/request";
 
-export default function Home() {
-  return (
-    <Suspense fallback={<SplashScreen />}>
-      <HomeContent />
-    </Suspense>
-  );
+// Redirect root path to default locale
+export default function RootPage() {
+  redirect(`/${defaultLocale}`);
 }

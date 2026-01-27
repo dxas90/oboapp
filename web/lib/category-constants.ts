@@ -25,29 +25,30 @@ export type Category = (typeof CATEGORIES)[number];
 // This is NOT a real category - just a UI filtering concept
 export const UNCATEGORIZED = "uncategorized" as const;
 
-// Bulgarian translations for real categories
-export const CATEGORY_LABELS: Record<Category, string> = {
-  "air-quality": "Качество на въздуха",
-  art: "Изкуство",
-  bicycles: "Велосипеди",
-  "construction-and-repairs": "Строителство и ремонти",
-  culture: "Култура",
-  electricity: "Електричество",
-  health: "Здравеопазване",
-  heating: "Отопление",
-  parking: "Паркиране",
-  "public-transport": "Градски транспорт",
-  "road-block": "Блокиран път",
-  sports: "Спорт",
-  traffic: "Трафик",
-  vehicles: "Превозни средства",
-  waste: "Отпадъци",
-  water: "Вода",
-  weather: "Време",
+// Translation keys for categories (use with useTranslations("categories"))
+// Example: t(`categories.${category}`)
+export const CATEGORY_TRANSLATION_KEYS: Record<Category, string> = {
+  "air-quality": "air-quality",
+  art: "art",
+  bicycles: "bicycles",
+  "construction-and-repairs": "construction-and-repairs",
+  culture: "culture",
+  electricity: "electricity",
+  health: "health",
+  heating: "heating",
+  parking: "parking",
+  "public-transport": "public-transport",
+  "road-block": "road-block",
+  sports: "sports",
+  traffic: "traffic",
+  vehicles: "vehicles",
+  waste: "waste",
+  water: "water",
+  weather: "weather",
 };
 
-// Separate label for the uncategorized UI option
-export const UNCATEGORIZED_LABEL = "Некатегоризирани";
+// Translation key for uncategorized
+export const UNCATEGORIZED_TRANSLATION_KEY = "uncategorized";
 
 // Display order for real categories (most common first)
 export const CATEGORY_DISPLAY_ORDER: Category[] = [

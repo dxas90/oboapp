@@ -62,6 +62,7 @@ If you identify a recurring pattern or developer preference:
   - Handles coordinate swapping (lat/lng fix).
   - Wraps raw arrays in `FeatureCollection`.
 - **Pattern:**
+
   ```typescript
   const validation = validateAndFixGeoJSON(rawJson, "source-name");
   if (!validation.isValid) return; // Log errors
@@ -152,6 +153,25 @@ import { buttonStyles, buttonSizes, borderRadius } from "@/lib/theme";
 ### Adding dependencies
 
 When adding npm dependencies always prefer running `npm install` over directly editing `package.json`.
+
+### Internationalization (i18n)
+
+**Always use translations for user-facing text.**
+
+- **Translation files**: `web/messages/bg.json` and `web/messages/en.json`
+- **Client components**: `const t = useTranslations("namespace");` then use `t("key")`
+- **Server components**: `const t = await useTranslations("namespace");`
+- **Category labels**: Use `useCategoryLabels()` hook, never `CATEGORY_LABELS` directly
+- **Navigation**: Use `Link`, `useRouter`, `usePathname` from `@/i18n/routing` (locale-aware)
+
+**When adding new UI text:**
+
+1. Add translation keys to both `bg.json` and `en.json`
+2. Use descriptive namespaces (`common`, `settings`, `notifications`, etc.)
+3. Import `useTranslations` from `next-intl`
+4. Never hardcode Bulgarian or English strings in JSX
+
+**See [internationalization.md](docs/features/internationalization.md) for complete guide.**
 
 ---
 

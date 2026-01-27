@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import FilterIcon from "@/components/icons/FilterIcon";
 import Checkbox from "@/components/Checkbox";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
 import { useDragPanel } from "@/lib/hooks/useDragPanel";
 import { borderRadius } from "@/lib/colors";
+import { useCategoryLabels } from "@/lib/hooks/useCategoryLabels";
 import {
-  CATEGORY_LABELS,
   UNCATEGORIZED,
-  UNCATEGORIZED_LABEL,
   Category,
 } from "@/lib/category-constants";
 
@@ -66,6 +66,9 @@ export default function CategoryFilterBox({
   onToggleCategory,
 }: CategoryFilterBoxProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const { getCategoryLabel } = useCategoryLabels();
+  const t = useTranslations("aria");
+  const tCommon = useTranslations("common");
 
   // Horizontal drag to open/close functionality
   const { isActuallyDragging, dragOffset, handlers } = useDragPanel({
@@ -110,7 +113,7 @@ export default function CategoryFilterBox({
           type="button"
           className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm sm:hidden"
           onClick={onTogglePanel}
-          aria-label="Затвори филтрите"
+          aria-label={t("closeFilters")}
         />
       )}
 
@@ -133,11 +136,7 @@ export default function CategoryFilterBox({
                 {categoryCounts.map(({ category, count }) => (
                   <Checkbox
                     key={category}
-                    label={
-                      category === UNCATEGORIZED
-                        ? UNCATEGORIZED_LABEL
-                        : CATEGORY_LABELS[category]
-                    }
+                    label={getCategoryLabel(category)}
                     checked={selectedCategories.has(category)}
                     onChange={() => onToggleCategory(category)}
                     count={count}
@@ -155,7 +154,7 @@ export default function CategoryFilterBox({
               onClick={onTogglePanel}
               className={`${buttonSizes.md} ${buttonStyles.primary} ${borderRadius.md}`}
             >
-              Покажи
+              {tCommon("close")}
             </button>
           </div>
         </div>
@@ -168,7 +167,7 @@ export default function CategoryFilterBox({
           className={[
             "drag-handle absolute right-0 top-1/2 z-40 -translate-y-1/2 translate-x-full rounded-r-lg px-2 py-3 hover:px-3 transition-all duration-200 border border-l-0 border-primary-hover bg-primary text-white cursor-grab active:cursor-grabbing shadow-lg",
           ].join(" ")}
-          aria-label={isOpen ? "Затвори филтрите" : "Отвори филтрите"}
+          aria-label={isOpen ? t("closeFilters") : t("openFilters")}
         >
           <div className="relative">
             <FilterIcon className="w-5 h-5 text-white" />

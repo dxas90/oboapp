@@ -1,0 +1,69 @@
+{
+  "common": {
+    "settings": "Settings",
+    "close": "Close",
+    "save": "Save",
+    "delete": "Delete",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "back": "Back"
+  },
+  "categories": {
+    "air-quality": "Air Quality",
+    "art": "Art",
+    "bicycles": "Bicycles",
+    "construction-and-repairs": "Construction & Repairs",
+    "culture": "Culture",
+    "electricity": "Electricity",
+    "health": "Healthcare",
+    "heating": "Heating",
+    "parking": "Parking",
+    "public-transport": "Public Transport",
+    "road-block": "Road Blocked",
+    "sports": "Sports",
+    "traffic": "Traffic",
+    "vehicles": "Vehicles",
+    "waste": "Waste",
+    "water": "Water",
+    "weather": "Weather",
+    "uncategorized": "Uncategorized",
+    "label": "Categories"
+  },
+  "settings": {
+    "title": "Settings",
+    "backToSettings": "Back to Settings",
+    "notificationInstructions": "2. Find the notification settings\n",
+    "deleteAccount": {
+      "title": "Delete My Account",
+      "confirmationRequired": "This action is irreversible. Type <strong>DELETE</strong> to confirm",
+      "placeholder": "DELETE",
+      "confirmationText": "DELETE",
+      "confirmationError": "Please type 'DELETE' to confirm"
+    },
+    "zones": {
+      "empty": "You have no zones of interest.",
+      "saveZone": "Save Zone"
+    }
+  },
+  "notifications": {
+    "prompt": {
+      "geolocation": "We won't use it for anything else. You can revoke access anytime in your browser settings.",
+      "blocked": "Your browser or device doesn't allow notifications. You can enable them in your browser settings.",
+      "goToSettings": "Go to Settings"
+    }
+  },
+  "messages": {
+    "publishedHere": "Published Here",
+    "ingestErrors": {
+      "title": "Processing Issues"
+    },
+    "loadError": "An error occurred while loading categories. Category filter may not work correctly."
+  },
+  "aria": {
+    "closeDetails": "Close details",
+    "closeFilters": "Close filters",
+    "openFilters": "Open filters",
+    "closeMenu": "Close menu",
+    "swipeToClose": "Swipe to close, or tap to close"
+  }
+}
