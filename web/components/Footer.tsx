@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 
 export default function Footer() {
+  const t = useTranslations("footer");
   return (
     <footer className="bg-footer-bg border-t border-neutral-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -11,7 +13,7 @@ export default function Footer() {
           {/* About Section */}
           <div>
             <h3 className="font-bold text-lg mb-4 text-foreground">
-              За проекта
+              {t("aboutProject")}
             </h3>
             <div className="space-y-2 text-sm">
               <div>
@@ -19,7 +21,7 @@ export default function Footer() {
                   href="/kak-se-rodi"
                   className="text-link hover:text-link-hover hover:underline"
                 >
-                  Как се роди?
+                  {t("howItStarted")}
                 </a>
               </div>
               <div>
@@ -27,7 +29,7 @@ export default function Footer() {
                   href="/sources"
                   className="text-link hover:text-link-hover hover:underline"
                 >
-                  Източници на данни
+                  {t("dataSources")}
                 </Link>
               </div>
               <div>
@@ -35,7 +37,7 @@ export default function Footer() {
                   href="/ingest-errors"
                   className="text-link hover:text-link-hover hover:underline"
                 >
-                  Съобщения с грешки
+                  {t("errorMessages")}
                 </Link>
               </div>
             </div>
@@ -56,14 +58,14 @@ export default function Footer() {
                   params: {
                     url: "https://github.com/vbuch/oboapp",
                     location: "footer",
-                    link_text: "Отворен код",
+                    link_text: t("openSource"),
                   },
                 });
               }}
             >
-              Отворен код
+              {t("openSource")}
             </a>
-            , разработен в Оборище с ❤️ за София.
+            {t("madeInOborishte")}
           </p>
         </div>
       </div>

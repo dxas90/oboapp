@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { MessageClassification } from "@/lib/message-classification";
 
@@ -15,6 +16,9 @@ export default function Header({
   messageId = "unknown",
   classification = "archived",
 }: HeaderProps) {
+  const t = useTranslations("messageDetail");
+  const tAria = useTranslations("aria");
+
   const handleClose = () => {
     trackEvent({
       name: "message_detail_closed",
@@ -35,7 +39,7 @@ export default function Header({
         className="drag-handle absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-neutral-border rounded-full sm:hidden cursor-grab active:cursor-grabbing"
         {...handlers}
         onClick={handleClose}
-        aria-label="Плъзни, за да затвориш, или натисни, за да затвориш"
+        aria-label={tAria("swipeToClose")}
       />
 
       <h2 className="text-lg sm:text-xl font-semibold text-foreground pt-3 sm:pt-0 flex items-center gap-2">
@@ -43,9 +47,9 @@ export default function Header({
           className={`w-3 h-3 rounded-full ${
             isActive ? "bg-destructive" : "bg-neutral"
           }`}
-          title={isActive ? "Активно" : "Минало"}
+          title={isActive ? t("active") : t("archived")}
         />
-        Детайли за сигнала
+        {t("title")}
       </h2>
       <button
         type="button"

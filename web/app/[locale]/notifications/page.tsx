@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { NotificationHistoryItem } from "@/lib/types";
@@ -10,6 +11,8 @@ import Card from "@/components/Card";
 export default function NotificationsPage() {
   const { user } = useAuth();
   const router = useRouter();
+  const t = useTranslations("notifications");
+  const tCommon = useTranslations("common");
   const [historyItems, setHistoryItems] = useState<NotificationHistoryItem[]>(
     [],
   );
@@ -36,12 +39,12 @@ export default function NotificationsPage() {
       setHistoryItems(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching notification history:", err);
-      setError("Неуспешно зареждане на историята на известията");
+      setError(t("loadError"));
       setHistoryItems([]);
     } finally {
       setIsLoading(false);
     }
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     if (!user) {
@@ -62,11 +65,11 @@ export default function NotificationsPage() {
               className="text-primary hover:text-primary-hover inline-flex items-center gap-2"
             >
               <span>←</span>
-              <span>Обратно към настройките</span>
+              <span>{tCommon("backToSettings")}</span>
             </Link>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-8">
-            История на известията
+            {t("title")}
           </h1>
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -85,12 +88,12 @@ export default function NotificationsPage() {
             className="text-primary hover:text-primary-hover inline-flex items-center gap-2"
           >
             <span>←</span>
-            <span>Обратно към настройките</span>
+            <span>{tCommon("backToSettings")}</span>
           </Link>
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          История на известията
+          {t("title")}
         </h1>
 
         {error && (
@@ -102,7 +105,7 @@ export default function NotificationsPage() {
         {historyItems.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <p className="text-gray-500 text-lg">
-              Все още нямате получени известия
+              {t("empty")}
             </p>
           </div>
         ) : (
@@ -122,6 +125,7 @@ interface NotificationHistoryCardProps {
 }
 
 function NotificationHistoryCard({ item }: NotificationHistoryCardProps) {
+  const t = useTranslations("notifications");
   const messagePreview =
     item.messageSnapshot.text.length > 200
       ? item.messageSnapshot.text.substring(0, 200) + "..."
@@ -144,7 +148,7 @@ function NotificationHistoryCard({ item }: NotificationHistoryCardProps) {
             <p className="text-sm text-gray-500 mb-1">{formattedDate}</p>
             {item.messageSnapshot.source && (
               <p className="text-xs text-gray-400 mb-2">
-                Източник: {item.messageSnapshot.source}
+                {t("source", { source: item.messageSnapshot.source })}
               </p>
             )}
           </div>
@@ -162,10 +166,7 @@ function NotificationHistoryCard({ item }: NotificationHistoryCardProps) {
         <div className="flex items-center gap-4 text-sm text-gray-500">
           {item.successfulDevicesCount > 0 && (
             <span>
-              Изпратено на {item.successfulDevicesCount}{" "}
-              {item.successfulDevicesCount === 1
-                ? "ваш абонамент"
-                : "ваши абонамента"}
+              {t("sentToDevices", { count: item.successfulDevicesCount })}
             </span>
           )}
         </div>

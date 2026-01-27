@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { borderRadius } from "@/lib/colors";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
@@ -22,6 +23,7 @@ export default function AddInterestsPrompt({
   onAddInterests,
   onDismiss,
 }: AddInterestsPromptProps) {
+  const t = useTranslations("onboarding.addInterestsPrompt");
   const handleAddInterests = useCallback(() => {
     trackEvent({
       name: "prompt_add_zones_clicked",
@@ -46,11 +48,10 @@ export default function AddInterestsPrompt({
         </div>
         <div className="flex-1">
           <h3 className="text-base font-semibold text-gray-900 mb-2">
-            Следи избрани зони
+            {t("title")}
           </h3>
           <p className="text-sm text-gray-600">
-            Избери важните за теб места и получавай известия, когато има нещо
-            ново там.
+            {t("description")}
           </p>
         </div>
       </div>
@@ -60,7 +61,7 @@ export default function AddInterestsPrompt({
           onClick={handleDismiss}
           className={`${buttonSizes.md} ${buttonStyles.secondary} ${borderRadius.md} font-medium`}
         >
-          По-късно
+          {t("later")}
         </button>
         <button
           type="button"
@@ -68,7 +69,7 @@ export default function AddInterestsPrompt({
           className={`${buttonSizes.lg} ${buttonStyles.primary} ${borderRadius.md} shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium`}
         >
           <PlusIcon className="w-5 h-5" />
-          Добави зона
+          {t("addZone")}
         </button>
       </div>
     </div>

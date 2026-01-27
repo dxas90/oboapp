@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { borderRadius } from "@/lib/colors";
 import { buttonStyles } from "@/lib/theme";
 
@@ -14,6 +15,7 @@ export default function GeolocationButton({
   isLocating = false,
   visible = true,
 }: GeolocationButtonProps) {
+  const t = useTranslations("geolocation");
   return (
     <button
       type="button"
@@ -22,7 +24,7 @@ export default function GeolocationButton({
       className={`absolute bottom-8 left-8 z-30 p-4 ${borderRadius.full} shadow-lg hover:shadow-xl transition-all duration-200 ${
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       } ${isLocating ? "cursor-not-allowed" : "cursor-pointer"} ${buttonStyles.primary}`}
-      aria-label="Покажи моето местоположение"
+      aria-label={t("showMyLocation")}
       aria-hidden={!visible}
     >
       <svg

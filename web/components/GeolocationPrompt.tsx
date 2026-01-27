@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import PromptCard from "./PromptCard";
 
@@ -12,6 +13,7 @@ export default function GeolocationPrompt({
   onAccept,
   onDecline,
 }: GeolocationPromptProps) {
+  const t = useTranslations("onboarding.geolocationPrompt");
   const handleAccept = () => {
     trackEvent({
       name: "geolocation_prompt_accepted",
@@ -45,15 +47,15 @@ export default function GeolocationPrompt({
             <path d="M22 12h-4M6 12H2M12 6V2M12 18v4" />
           </svg>
         }
-        title="Покажи местоположението ми"
-        description="Искаш ли да центрираме картата на текущото ти местоположение?"
-        note="Няма да го използваме за нищо друго. Можеш да забраниш достъпа до него по всяко време в настройките на браузъра."
+        title={t("title")}
+        description={t("description")}
+        note={t("note")}
         primaryButton={{
-          text: "Разреши достъп",
+          text: t("allowAccess"),
           onClick: handleAccept,
         }}
         secondaryButton={{
-          text: "Не сега",
+          text: t("notNow"),
           onClick: handleDecline,
         }}
       />

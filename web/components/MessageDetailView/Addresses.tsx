@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import type { Address } from "@/lib/types";
 import DetailItem from "./DetailItem";
@@ -16,10 +17,12 @@ export default function Addresses({
   onClose,
   messageId = "unknown",
 }: AddressesProps) {
+  const t = useTranslations("messageDetail");
+
   if (!addresses || addresses.length === 0) return null;
 
   return (
-    <DetailItem title="Адреси">
+    <DetailItem title={t("addresses")}>
       <div className="space-y-2">
         {addresses.map((address, index) => (
           <button

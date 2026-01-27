@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
@@ -11,6 +12,7 @@ import UserMenu from "@/components/UserMenu";
 
 export default function Header() {
   const { user, signInWithGoogle } = useAuth();
+  const t = useTranslations("header");
   const [logoError, setLogoError] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -20,9 +22,9 @@ export default function Header() {
       await signInWithGoogle();
     } catch (error) {
       console.error("Error signing in from header:", error);
-      alert("Неуспешен вход. Моля, опитайте отново.");
+      alert(t("loginError"));
     }
-  }, [signInWithGoogle]);
+  }, [signInWithGoogle, t]);
 
   return (
     <>
@@ -69,7 +71,7 @@ export default function Header() {
                   {user.photoURL && (
                     <Image
                       src={user.photoURL}
-                      alt={user.displayName || "Потребител"}
+                      alt={user.displayName || t("user")}
                       width={32}
                       height={32}
                       className="w-8 h-8 rounded-full"
@@ -81,9 +83,9 @@ export default function Header() {
                   type="button"
                   onClick={handleLoginClick}
                   className={`${buttonStyles.primary} ${buttonSizes.md} ${borderRadius.sm}`}
-                  aria-label="Влез"
+                  aria-label={t("login")}
                 >
-                  Влез
+                  {t("login")}
                 </button>
               )}
             </div>

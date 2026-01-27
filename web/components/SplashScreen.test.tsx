@@ -5,7 +5,8 @@ import SplashScreen from "@/components/SplashScreen";
 describe("SplashScreen", () => {
   it("renders the loading text", () => {
     render(<SplashScreen />);
-    expect(screen.getByText("Зареждане...")).toBeInTheDocument();
+    // Translation key: common.loading
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
   it("renders the logo with correct alt text", () => {

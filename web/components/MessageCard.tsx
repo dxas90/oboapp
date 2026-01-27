@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { trackEvent } from "@/lib/analytics";
 import { Message } from "@/lib/types";
@@ -53,6 +54,8 @@ export default function MessageCard({
   onClick,
   showIngestErrors = false,
 }: MessageCardProps) {
+  const t = useTranslations("error");
+  const tMessages = useTranslations("messages.ingestErrors");
   const [logoError, setLogoError] = useState(false);
 
   // Classify message for status indicator
@@ -163,7 +166,7 @@ export default function MessageCard({
             )}
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-foreground truncate">
-                {sourceInfo?.name || message.source || "Неизвестен източник"}
+                {sourceInfo?.name || message.source || t("unknownSource")}
               </h3>
             </div>
           </div>
@@ -184,7 +187,7 @@ export default function MessageCard({
         {hasIngestErrors && ingestErrors && (
           <div className="mt-auto pt-4">
             <div className="rounded-md border border-error-border bg-error-light text-error p-3 text-xs space-y-2">
-              <p className="font-semibold">Проблеми при обработка</p>
+              <p className="font-semibold">{tMessages("title")}</p>
               <ul className="list-disc list-inside space-y-1">
                 {ingestErrors.map((ingestError, index) => (
                   <li

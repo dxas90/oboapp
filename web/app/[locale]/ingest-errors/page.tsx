@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import MessageCard, { MessageCardSkeleton } from "@/components/MessageCard";
@@ -43,6 +44,8 @@ const fetchIngestErrors = async ({
 export default function IngestErrorsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("ingestErrors");
+  const tCommon = useTranslations("common");
 
   const {
     data,
@@ -91,18 +94,17 @@ export default function IngestErrorsPage() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8 border border-neutral-border">
           <div className="space-y-2">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Съобщения с проблеми при обработка
+              {t("title")}
             </h1>
             <p className="text-sm text-neutral">
-              Финализирани съобщения без GeoJSON, които съдържат записи за
-              проблеми при обработка.
+              {t("description")}
             </p>
           </div>
         </div>
 
         {error && (
           <div className="mb-6 rounded-md border border-error-border bg-error-light p-4 text-error">
-            Не успях да заредя съобщенията. Моля, опитайте отново.
+            {t("loadError")}
           </div>
         )}
 
@@ -124,7 +126,7 @@ export default function IngestErrorsPage() {
 
           {isEmpty && (
             <div className="col-span-full text-center text-neutral py-8">
-              Няма налични съобщения
+              {t("noMessages")}
             </div>
           )}
         </div>
@@ -139,7 +141,7 @@ export default function IngestErrorsPage() {
               className="px-6 py-3 rounded-md border border-neutral-border bg-white text-neutral hover:bg-neutral-light transition"
               disabled={isFetchingNextPage}
             >
-              {isFetchingNextPage ? "Зареждане..." : "Покажи още"}
+              {isFetchingNextPage ? tCommon("loading") : tCommon("showMore")}
             </button>
           </div>
         )}

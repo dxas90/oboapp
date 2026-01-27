@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Message } from "@/lib/types";
 import { useMemo } from "react";
 import MessageCard, { MessageCardSkeleton } from "./MessageCard";
@@ -19,6 +20,7 @@ export default function MessagesGrid({
   limit = 6,
   showHeading = true,
 }: MessagesGridProps) {
+  const t = useTranslations("home");
   // Helper to parse date
   const parseDate = (dateValue: Date | string | undefined): Date => {
     if (!dateValue) return new Date(0);
@@ -47,7 +49,7 @@ export default function MessagesGrid({
     <div className="bg-gray-50 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-gray-900 mb-8">
-          Последни съобщения
+          {t("recentMessages")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -67,7 +69,7 @@ export default function MessagesGrid({
           {!isLoading && finalizedMessages.length === 0 && (
             // Empty state (show nothing, just display available messages)
             <div className="col-span-full text-center text-gray-500 py-8">
-              Няма налични съобщения
+              {t("noMessages")}
             </div>
           )}
         </div>
@@ -91,7 +93,7 @@ export default function MessagesGrid({
       {!isLoading && finalizedMessages.length === 0 && (
         // Empty state (show nothing, just display available messages)
         <div className="col-span-full text-center text-gray-500 py-8">
-          Няма налични съобщения
+          {t("noMessages")}
         </div>
       )}
     </div>

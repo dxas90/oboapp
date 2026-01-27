@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Circle } from "@react-google-maps/api";
+import { useTranslations } from "next-intl";
 import { trackEvent, trackEventDebounced } from "@/lib/analytics";
 import { colors, borderRadius } from "@/lib/colors";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
@@ -29,6 +30,8 @@ export default function InterestTargetMode({
   onSave,
   onCancel,
 }: InterestTargetModeProps) {
+  const t = useTranslations("interestZone");
+  const tCommon = useTranslations("common");
   const [currentCenter, setCurrentCenter] = useState<{
     lat: number;
     lng: number;
@@ -144,7 +147,7 @@ export default function InterestTargetMode({
           {/* Radius Slider */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-neutral mb-2">
-              Радиус: {radius}м
+              {t("radiusLabel", { radius })}
             </label>
             <input
               type="range"
@@ -169,7 +172,7 @@ export default function InterestTargetMode({
               disabled={isSaving}
               className={`flex-1 ${buttonSizes.md} font-medium ${buttonStyles.ghost} ${borderRadius.sm}`}
             >
-              Отказ
+              {tCommon("back")}
             </button>
             <button
               type="button"
@@ -177,7 +180,7 @@ export default function InterestTargetMode({
               disabled={!currentCenter || isSaving}
               className={`flex-1 ${buttonSizes.md} font-medium ${buttonStyles.primary} ${borderRadius.sm}`}
             >
-              {isSaving ? "Запазвам..." : "Запази зоната"}
+              {isSaving ? tCommon("saving") : t("saveZone")}
             </button>
           </div>
         </div>

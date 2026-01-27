@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 interface InterestContextMenuProps {
   readonly position: { x: number; y: number };
   readonly onMove: () => void;
@@ -11,6 +13,9 @@ export default function InterestContextMenu({
   onDelete,
   onClose,
 }: InterestContextMenuProps) {
+  const t = useTranslations("common");
+  const tAria = useTranslations("aria");
+
   return (
     <>
       {/* Backdrop to close menu */}
@@ -18,7 +23,7 @@ export default function InterestContextMenu({
         type="button"
         className="fixed inset-0 z-40 bg-transparent cursor-default"
         onClick={onClose}
-        aria-label="Затвори менюто"
+        aria-label={tAria("closeMenu")}
       />
       {/* Menu */}
       <div
@@ -44,7 +49,7 @@ export default function InterestContextMenu({
           >
             <path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
           </svg>
-          Премести
+          {t("move")}
         </button>
         <button
           type="button"
@@ -62,7 +67,7 @@ export default function InterestContextMenu({
           >
             <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
           </svg>
-          Изтрий
+          {t("delete")}
         </button>
       </div>
     </>

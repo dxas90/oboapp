@@ -73,7 +73,7 @@ export default function GeoJSONLayer({
         title:
           feature.properties?.address ||
           feature.properties?.street_name ||
-          "Маркер",
+          t("markerDefaultTitle"),
         zIndex: classification === "active" ? 10 : 5, // Active markers higher
       });
 

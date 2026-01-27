@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/routing";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { trackEvent } from "@/lib/analytics";
+import { useTranslations } from "next-intl";
 
 interface UserMenuProps {
   readonly isOpen: boolean;
@@ -12,6 +13,8 @@ interface UserMenuProps {
 
 export default function UserMenu({ isOpen, onClose }: UserMenuProps) {
   const { user, signOut } = useAuth();
+  const t = useTranslations("common");
+  const tAuth = useTranslations("auth");
 
   const handleSignOut = () => {
     trackEvent({ name: "logout_clicked", params: { zones_count: 0 } });
@@ -67,7 +70,7 @@ export default function UserMenu({ isOpen, onClose }: UserMenuProps) {
             {user.photoURL && (
               <Image
                 src={user.photoURL}
-                alt={user.displayName || "Потребител"}
+                alt={user.displayName || tAuth("user")}
                 width={40}
                 height={40}
                 className="w-12 h-12 rounded-full"
@@ -92,7 +95,7 @@ export default function UserMenu({ isOpen, onClose }: UserMenuProps) {
             onClick={onClose}
             className="block w-full px-6 py-3 text-left text-sm hover:bg-neutral-light transition-colors"
           >
-            Настройки
+            {t("settings")}
           </Link>
 
           {/* Divider */}
@@ -104,7 +107,7 @@ export default function UserMenu({ isOpen, onClose }: UserMenuProps) {
             onClick={handleSignOut}
             className="w-full px-6 py-3 text-left text-sm text-error hover:bg-error-light transition-colors"
           >
-            Излез
+            {tAuth("signOut")}
           </button>
         </div>
       </div>

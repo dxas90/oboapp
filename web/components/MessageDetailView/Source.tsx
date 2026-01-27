@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import sources from "@/lib/sources.json";
 import DetailItem from "./DetailItem";
@@ -61,6 +62,7 @@ function SourceContent({
 
 export default function SourceDisplay({ sourceId, sourceUrl }: SourceProps) {
   const [logoError, setLogoError] = useState(false);
+  const t = useTranslations("messageDetail");
   const source = sources.find((s) => s.id === sourceId);
   const logoPath = `/sources/${sourceId}.png`;
   const isValidUrl = sourceUrl?.startsWith("https://");
@@ -76,14 +78,14 @@ export default function SourceDisplay({ sourceId, sourceUrl }: SourceProps) {
   );
 
   return (
-    <DetailItem title="Източник">
+    <DetailItem title={t("source")}>
       <div className="flex items-center space-x-2">
         {isValidUrl ? (
           <a
             href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label={`Отвори ${source?.name || sourceId} в нов таб`}
+            aria-label={t("openSourceInNewTab", { source: source?.name || sourceId })}
             className="flex items-center space-x-2"
             onClick={() => {
               trackEvent({

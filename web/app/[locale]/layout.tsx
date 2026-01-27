@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Sofia_Sans } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import "../globals.css";
 import ClientLayout from "@/components/ClientLayout";
@@ -14,33 +14,37 @@ const sofiaSans = Sofia_Sans({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "OboApp",
-  description: "Следи събитията в район Оборище",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL || "https://oboapp.online",
-  ),
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+
+  return {
     title: "OboApp",
-  },
-  openGraph: {
-    title: "OboApp",
-    description: "Следи събитията в район Оборище",
-    images: ["/icon-512x512.png"],
-    locale: "bg_BG",
-    type: "website",
-    siteName: "OboApp",
-  },
-  twitter: {
-    card: "summary",
-    title: "OboApp",
-    description: "Следи събитията в район Оборище",
-    images: ["/icon-512x512.png"],
-  },
-};
+    description: t("description"),
+    metadataBase: new URL(
+      process.env.NEXT_PUBLIC_BASE_URL || "https://oboapp.online",
+    ),
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "OboApp",
+    },
+    openGraph: {
+      title: "OboApp",
+      description: t("description"),
+      images: ["/icon-512x512.png"],
+      locale: "bg_BG",
+      type: "website",
+      siteName: "OboApp",
+    },
+    twitter: {
+      card: "summary",
+      title: "OboApp",
+      description: t("description"),
+      images: ["/icon-512x512.png"],
+    },
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

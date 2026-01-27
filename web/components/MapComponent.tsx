@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { GoogleMap } from "@react-google-maps/api";
 import { Message, Interest } from "@/lib/types";
 import { SOFIA_BOUNDS } from "@/lib/bounds-utils";
@@ -104,6 +105,7 @@ export default function MapComponent({
   targetMode,
   initialCenter,
 }: MapComponentProps) {
+  const t = useTranslations("error");
   const mapRef = useRef<google.maps.Map | null>(null);
   const latestCenterRef = useRef(SOFIA_CENTER);
   const [currentZoom, setCurrentZoom] = useState<number>(14);
@@ -261,7 +263,7 @@ export default function MapComponent({
         </GoogleMap>
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          <p className="text-red-600">Няма настроен ключ за Google Maps API</p>
+          <p className="text-red-600">{t("noMapsApiKey")}</p>
         </div>
       )}
     </div>

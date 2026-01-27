@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { borderRadius } from "@/lib/colors";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
@@ -12,12 +13,13 @@ interface NotificationButtonProps {
 
 /**
  * Button shown to unauthenticated users in idle state to start onboarding flow.
- * Displays "Получавай известия" with a bell icon.
+ * Displays notification prompt with a bell icon.
  */
 export default function NotificationButton({
   onClick,
   visible = true,
 }: NotificationButtonProps) {
+  const t = useTranslations("onboarding.notificationPrompt");
   const handleClick = () => {
     trackEvent({
       name: "onboarding_notification_clicked",
@@ -37,11 +39,11 @@ export default function NotificationButton({
       } shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium ${
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      aria-label="Получавай известия"
+      aria-label={t("button")}
       aria-hidden={!visible}
     >
       <BellIcon className="w-5 h-5" />
-      Получавай известия
+      {t("button")}
     </button>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { subscribeToPushNotifications } from "@/lib/notification-service";
 import { useAuth } from "@/lib/auth-context";
@@ -23,6 +24,7 @@ export default function NotificationPrompt({
   onDismiss,
 }: NotificationPromptProps) {
   const { user } = useAuth();
+  const t = useTranslations("onboarding.notificationPrompt");
 
   const handleAccept = useCallback(async () => {
     trackEvent({
@@ -60,15 +62,15 @@ export default function NotificationPrompt({
     <div className="animate-fade-in absolute bottom-4 right-4 z-40 max-w-sm">
       <PromptCard
         icon={<BellIcon className="w-12 h-12 text-primary" />}
-        title="Получавай известия"
-        description="Ще поискаме разрешение за известия от браузъра."
-        note="След това ще можеш да добавиш зони на интерес и да получаваш известия за събития в тях."
+        title={t("title")}
+        description={t("description")}
+        note={t("note")}
         primaryButton={{
-          text: "Разреши известия",
+          text: t("allow"),
           onClick: handleAccept,
         }}
         secondaryButton={{
-          text: "Не сега",
+          text: t("notNow"),
           onClick: handleDecline,
         }}
       />

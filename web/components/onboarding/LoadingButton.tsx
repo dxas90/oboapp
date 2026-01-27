@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { borderRadius } from "@/lib/colors";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
 
@@ -12,6 +13,7 @@ interface LoadingButtonProps {
  * Matches the styling of NotificationButton/AddInterestButton but is non-interactive.
  */
 export default function LoadingButton({ visible = true }: LoadingButtonProps) {
+  const t = useTranslations("common");
   return (
     <button
       type="button"
@@ -23,7 +25,7 @@ export default function LoadingButton({ visible = true }: LoadingButtonProps) {
       } shadow-lg flex items-center gap-2 font-medium disabled:opacity-100 ${
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      aria-label="Зарежда се..."
+      aria-label={t("loading")}
       aria-hidden={!visible}
     >
       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

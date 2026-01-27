@@ -1,3 +1,7 @@
+import { useTranslations } from "next-intl";
+
 export default function EmptyZonesMessage() {
-  return <p className="text-neutral">Нямате зони на интерес.</p>;
+  const t = useTranslations("settings.zones");
+
+  return <p className="text-neutral">{t("empty")}</p>;
 }

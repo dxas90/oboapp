@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { trackEvent } from "@/lib/analytics";
 import { borderRadius } from "@/lib/colors";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
@@ -16,6 +17,7 @@ export default function AddInterestButton({
   isUserAuthenticated = false,
   visible = true,
 }: AddInterestButtonProps) {
+  const t = useTranslations("onboarding.addInterestsPrompt");
   const handleClick = () => {
     trackEvent({
       name: "zone_add_initiated",
@@ -35,11 +37,11 @@ export default function AddInterestButton({
       } shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2 font-medium ${
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
-      aria-label="Добави зона"
+      aria-label={t("addZone")}
       aria-hidden={!visible}
     >
       <PlusIcon className="w-5 h-5" />
-      Добави зона
+      {t("addZone")}
     </button>
   );
 }

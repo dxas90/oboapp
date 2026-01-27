@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { hasConsentDecision, setConsent, initGA } from "@/lib/analytics";
 import { buttonStyles, buttonSizes } from "@/lib/theme";
 import { borderRadius } from "@/lib/colors";
 
 export default function CookieConsent() {
+  const t = useTranslations("cookie");
   const [isVisible, setIsVisible] = useState(() => {
     // Only check on client side and show banner only if user hasn't made a decision yet
     if (typeof window !== "undefined") {
@@ -35,14 +37,14 @@ export default function CookieConsent() {
         {/* Mobile compact view with icon buttons */}
         <div className="flex sm:hidden items-center gap-2">
           <p className="text-xs text-neutral flex-1">
-            Използваме бисквитки за анализ на трафика.
+            {t("message")}
           </p>
           <div className="flex gap-1.5">
             <button
               type="button"
               onClick={handleDecline}
               className="w-8 h-8 flex items-center justify-center bg-neutral-light hover:bg-neutral-border text-neutral rounded-lg font-bold text-lg"
-              aria-label="Откажи"
+              aria-label={t("decline")}
             >
               ✕
             </button>
@@ -50,7 +52,7 @@ export default function CookieConsent() {
               type="button"
               onClick={handleAccept}
               className="w-8 h-8 flex items-center justify-center bg-primary hover:bg-primary-hover text-white rounded-lg font-bold text-lg"
-              aria-label="Приеми"
+              aria-label={t("accept")}
             >
               ✓
             </button>
@@ -60,7 +62,7 @@ export default function CookieConsent() {
         {/* Desktop single-line view */}
         <div className="hidden sm:flex items-center gap-4">
           <p className="text-xs text-neutral flex-1">
-            Използваме бисквитки за анализ на трафика.
+            {t("message")}
           </p>
           <div className="flex gap-2 whitespace-nowrap">
             <button
@@ -68,14 +70,14 @@ export default function CookieConsent() {
               onClick={handleDecline}
               className={`${buttonSizes.sm} font-medium ${buttonStyles.secondary} ${borderRadius.md}`}
             >
-              Откажи
+              {t("decline")}
             </button>
             <button
               type="button"
               onClick={handleAccept}
               className={`${buttonSizes.sm} font-medium ${buttonStyles.primary} ${borderRadius.md}`}
             >
-              Приеми
+              {t("accept")}
             </button>
           </div>
         </div>

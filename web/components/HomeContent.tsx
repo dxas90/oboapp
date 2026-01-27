@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import MapContainer from "@/components/MapContainer";
 import MessageDetailView from "@/components/MessageDetailView";
@@ -31,6 +32,7 @@ export default function HomeContent() {
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations("common");
 
   // Core hooks
   const {
@@ -173,7 +175,7 @@ export default function HomeContent() {
         />
         {isLoading && (
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-lg shadow-md z-20">
-            <p className="text-sm text-neutral">Зареждане...</p>
+            <p className="text-sm text-neutral">{t("loading")}</p>
           </div>
         )}
       </div>

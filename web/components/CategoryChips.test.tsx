@@ -42,7 +42,8 @@ describe("CategoryChips", () => {
 
   it("renders localized category labels", () => {
     render(<CategoryChips categories={["water"]} />);
-    expect(screen.getByText("Вода")).toBeInTheDocument();
+    // Translation key: categories.water
+    expect(screen.getByText(/water/i)).toBeInTheDocument();
   });
 
   it("shows fades when chips overflow", async () => {
