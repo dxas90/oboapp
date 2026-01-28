@@ -55,7 +55,7 @@ export default function Header({
         type="button"
         onClick={handleClose}
         className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-neutral-light rounded-full mt-3 sm:mt-0"
-        aria-label="Затвори детайлите"
+        aria-label={tAria("closeDetails")}
       >
         <svg
           className="w-6 h-6"

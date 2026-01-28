@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Interest, NotificationSubscription } from "@/lib/types";
@@ -24,6 +25,7 @@ import ErrorBanner from "./ErrorBanner";
 export default function SettingsPage() {
   const { user, signOut, reauthenticateWithGoogle } = useAuth();
   const router = useRouter();
+  const t = useTranslations("settings");
 
   const [interests, setInterests] = useState<Interest[]>([]);
   const [subscriptions, setSubscriptions] = useState<
@@ -84,7 +86,7 @@ export default function SettingsPage() {
       );
     } catch (err) {
       console.error("Error fetching data:", err);
-      setError("Неуспешно зареждане на данни");
+      setError(t("loadError"));
       // Ensure arrays are set even on error
       setInterests([]);
       setSubscriptions([]);
@@ -149,30 +151,20 @@ export default function SettingsPage() {
       const supported = await isMessagingSupported();
 
       if (!supported) {
-        alert(
-          "За съжаление, този браузър не поддържа известия.\n\n" +
-            "На iOS Safari е необходимо да добавите приложението към началния екран " +
-            "преди да можете да получавате известия."
-        );
+        alert(t("notificationsNotSupported"));
         return;
       }
 
       // Check if notifications are blocked
       const currentPermission = getNotificationPermission();
       if (currentPermission === "denied") {
-        alert(
-          "Известията са блокирани в браузъра. За да ги разрешите:\n\n" +
-            "1. Кликнете на иконката на катинара/информацията до адресната лента\n" +
-            "2. Намерете настройките за известия\n" +
-            "3. Разрешете известията за този сайт\n" +
-            "4. Презаредете страницата"
-        );
+        alert(t("notificationsBlocked"));
         return;
       }
 
       const granted = await requestNotificationPermission();
       if (!granted) {
-        alert("Моля, разрешете известия в браузъра");
+        alert(t("pleaseAllowNotifications"));
         return;
       }
 
@@ -181,7 +173,7 @@ export default function SettingsPage() {
       await fetchData(); // Refresh subscriptions
     } catch (error) {
       console.error("Error subscribing:", error);
-      alert("Грешка при абонирането");
+      alert(t("subscribeError"));
     }
   };
 
@@ -210,15 +202,13 @@ export default function SettingsPage() {
       await fetchData(); // Refresh subscriptions
     } catch (error) {
       console.error("Error unsubscribing:", error);
-      alert("Грешка при отписването");
+      alert(t("unsubscribeError"));
     }
   };
 
   const handleUnsubscribeAll = async () => {
     if (!user) return;
-    if (
-      !confirm("Сигурни ли сте, че искате да се отпишете от всички устройства?")
-    ) {
+    if (!confirm(t("unsubscribeAllConfirm"))) {
       return;
     }
 
@@ -239,13 +229,13 @@ export default function SettingsPage() {
       await fetchData(); // Refresh subscriptions
     } catch (error) {
       console.error("Error unsubscribing all:", error);
-      alert("Грешка при отписването от всички устройства");
+      alert(t("unsubscribeAllError"));
     }
   };
 
   const handleDeleteAccount = async (confirmText: string) => {
-    if (confirmText !== "ИЗТРИЙ") {
-      alert("Моля, напишете 'ИЗТРИЙ' за потвърждение");
+    if (confirmText !== t("deleteAccount.confirmationText")) {
+      alert(t("deleteAccount.confirmationError"));
       return;
     }
 
@@ -257,7 +247,7 @@ export default function SettingsPage() {
         await reauthenticateWithGoogle();
       } catch (reauthError) {
         console.error("Re-authentication failed:", reauthError);
-        alert("Необходима е повторна идентификация. Моля, опитайте отново.");
+        alert(t("reauthRequired"));
         setIsDeleting(false);
         return;
       }
@@ -282,7 +272,7 @@ export default function SettingsPage() {
       }, 2000);
     } catch (error) {
       console.error("Error deleting account:", error);
-      alert("Грешка при изтриването на профила");
+      alert(t("deleteAccountError"));
       setIsDeleting(false);
     }
   };

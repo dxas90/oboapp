@@ -1,16 +1,24 @@
 import { Metadata } from "next";
+import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import sources from "@/lib/sources.json";
 import geocodingSources from "@/lib/geocoding.json";
 import SourceCard from "@/components/SourceCard";
 import GeocodingSourceCard from "@/components/GeocodingSourceCard";
 
-export const metadata: Metadata = {
-  title: "Източници - OboApp",
-  description: "Източници на данни за събития и уведомления в район Оборище",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
+    title: t("sourcesTitle"),
+    description: t("sourcesDescription"),
+  };
+}
 
-export default function SourcesPage() {
+export default async function SourcesPage() {
+  const t = await getTranslations("sources");
+  const tCommon = await getTranslations("common");
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -21,12 +29,12 @@ export default function SourcesPage() {
             className="text-primary hover:text-primary-hover inline-flex items-center gap-2"
           >
             <span>←</span>
-            <span>Начало</span>
+            <span>{tCommon("home")}</span>
           </Link>
         </div>
 
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Източници на данни
+          {t("title")}
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

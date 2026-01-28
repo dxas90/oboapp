@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import type { Pin, StreetSection } from "@/lib/types";
 import DetailItem from "./DetailItem";
 
@@ -8,10 +9,11 @@ interface LocationsProps {
 }
 
 export default function Locations({ pins, streets }: LocationsProps) {
+  const t = useTranslations("messageDetail");
   return (
     <>
       {pins && pins.length > 0 && (
-        <DetailItem title="Локации">
+        <DetailItem title={t("locations")}>
           <div className="space-y-3">
             {pins.map((pin, index) => (
               <div
@@ -39,7 +41,7 @@ export default function Locations({ pins, streets }: LocationsProps) {
       )}
 
       {streets && streets.length > 0 && (
-        <DetailItem title="Улични участъци">
+        <DetailItem title={t("streetSections")}>
           <div className="space-y-3">
             {streets.map((street, index) => (
               <div

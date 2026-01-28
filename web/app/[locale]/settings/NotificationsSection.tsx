@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { NotificationSubscription } from "@/lib/types";
 import SubscriptionCount from "./SubscriptionCount";
 import SubscribeDevicePrompt from "./SubscribeDevicePrompt";
@@ -21,13 +22,14 @@ export default function NotificationsSection({
   onUnsubscribeDevice,
   onUnsubscribeAll,
 }: NotificationsSectionProps) {
+  const t = useTranslations("settings");
   const isCurrentDeviceSubscribed = subscriptions.some(
     (sub) => sub.token === currentDeviceToken
   );
 
   return (
     <section className="bg-white rounded-lg shadow mb-6 p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Известия</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t("notificationsTitle")}</h2>
 
       <SubscriptionCount count={subscriptions.length} />
 

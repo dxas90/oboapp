@@ -103,7 +103,7 @@ export default function MessageDetailView({
       />
 
       <aside
-        aria-label="Детайли за сигнала"
+        aria-label={t("detailsAriaLabel")}
         className={`fixed z-40 bg-white shadow-2xl overflow-y-auto transition-all duration-300 ease-out
           bottom-0 left-0 right-0 max-h-[85vh] rounded-t-2xl
           sm:inset-y-0 sm:left-auto sm:right-0 sm:w-96 sm:max-h-none sm:rounded-none
@@ -131,7 +131,7 @@ export default function MessageDetailView({
           }`}
         >
           {message.finalizedAt && (
-            <DetailItem title="Публикувано тук">
+            <DetailItem title={t("publishedHere")}>
               <p className="text-base text-gray-900">
                 {formatDate(message.finalizedAt)}
               </p>
@@ -146,12 +146,12 @@ export default function MessageDetailView({
           )}
 
           {message.categories && message.categories.length > 0 && (
-            <DetailItem title="Категории">
+            <DetailItem title={t("categories")}>
               <CategoryChips categories={message.categories} />
             </DetailItem>
           )}
 
-          <DetailItem title="Текст">
+          <DetailItem title={t("text")}>
             <MessageText
               text={message.text}
               markdownText={message.extractedData?.markdown_text}
@@ -159,7 +159,7 @@ export default function MessageDetailView({
           </DetailItem>
 
           {message.extractedData?.responsible_entity && (
-            <DetailItem title="Отговорна институция">
+            <DetailItem title={t("responsibleInstitution")}>
               <p className="text-base text-gray-900">
                 {message.extractedData.responsible_entity}
               </p>
@@ -179,11 +179,9 @@ export default function MessageDetailView({
           />
 
           {message.geoJson?.features && (
-            <DetailItem title="Обекти на картата">
+            <DetailItem title={t("mapObjects")}>
               <p className="text-sm text-gray-900">
-                {message.geoJson.features.length}{" "}
-                {message.geoJson.features.length === 1 ? "обект" : "обекта"} на
-                картата
+                {t("mapObjectsCount", { count: message.geoJson.features.length })}
               </p>
             </DetailItem>
           )}

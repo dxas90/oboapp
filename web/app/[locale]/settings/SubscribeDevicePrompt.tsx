@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   getPlatformInfo,
   getNotificationInstructions,
@@ -18,6 +19,7 @@ export default function SubscribeDevicePrompt({
   onSubscribe,
   hasAnySubscriptions,
 }: SubscribeDevicePromptProps) {
+  const t = useTranslations("settings");
   const [platformInfo] = useState<PlatformInfo | null>(() => {
     // Only run on client side
     if (typeof window !== "undefined") {
@@ -37,8 +39,8 @@ export default function SubscribeDevicePrompt({
     <div className="mb-4 bg-warning-light border border-warning-border rounded-lg p-4">
       <p className="text-warning mb-2">
         {hasAnySubscriptions
-          ? "Текущото устройство не е абонирано за известия."
-          : "Няма абонамент за известия на нито едно устройство. Това е основната задача на OboApp. Абонирай се!"}
+          ? t("currentDeviceNotSubscribed")
+          : t("noSubscriptionsPrompt")}
       </p>
 
       {platformInfo.requiresPWAInstall && (
@@ -62,7 +64,7 @@ export default function SubscribeDevicePrompt({
           onClick={onSubscribe}
           className={`${buttonSizes.md} ${buttonStyles.primary} ${borderRadius.md}`}
         >
-          Абонирай това устройство
+          {t("subscribeThisDevice")}
         </button>
       )}
     </div>

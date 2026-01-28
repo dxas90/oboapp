@@ -35,6 +35,24 @@
   },
   "settings": {
     "title": "Settings",
+    "loadError": "Failed to load data",
+    "notificationsTitle": "Notifications",
+    "zonesTitle": "Zones of Interest",
+    "thisDevice": "This Device",
+    "addedOn": "Added: {date}",
+    "unsubscribe": "Unsubscribe",
+    "currentDeviceNotSubscribed": "Current device is not subscribed to notifications.",
+    "noSubscriptionsPrompt": "No notification subscription on any device. This is OboApp's main purpose. Subscribe!",
+    "subscribeThisDevice": "Subscribe This Device",
+    "notificationsNotSupported": "Unfortunately, this browser does not support notifications.\n\nOn iOS Safari, you need to add the app to your home screen before you can receive notifications.",
+    "notificationsBlocked": "Notifications are blocked in your browser. To enable them:\n\n1. Click on the lock/info icon next to the address bar\n2. Find notification settings\n3. Allow notifications for this site\n4. Reload the page",
+    "pleaseAllowNotifications": "Please allow notifications in your browser",
+    "subscribeError": "Error subscribing",
+    "unsubscribeError": "Error unsubscribing",
+    "unsubscribeAllConfirm": "Are you sure you want to unsubscribe from all devices?",
+    "unsubscribeAllError": "Error unsubscribing from all devices",
+    "reauthRequired": "Re-authentication required. Please try again.",
+    "deleteAccountError": "Error deleting account",
     "notificationInstructions": "2. Find the notification settings\n",
     "deleteAccount": {
       "title": "Delete My Account",
@@ -46,15 +64,6 @@
     "zones": {
       "empty": "You have no zones of interest.",
       "saveZone": "Save Zone"
-    }
-  },
-  "notifications": {
-    "title": "Notification History",
-    "loadError": "Failed to load notification history",
-    "prompt": {
-      "geolocation": "We won't use it for anything else. You can revoke access anytime in your browser settings.",
-      "blocked": "Your browser or device doesn't allow notifications. You can enable them in your browser settings.",
-      "goToSettings": "Go to Settings"
     }
   },
   "messages": {
@@ -167,59 +176,12 @@
   "metadata": {
     "description": "Track events in Oborishte district",
     "notFoundTitle": "Page not found - OboApp",
-    "notFoundDescription": "The page you are looking for does not exist."
+    "notFoundDescription": "The page you are looking for does not exist.",
+    "sourcesTitle": "Data Sources - OboApp",
+    "sourcesDescription": "Information about our data sources, APIs, and terms of use"
   },
   "map": {
     "markerDefaultTitle": "Marker"
-  },
-  "onboarding": {
-    "notificationPrompt": {
-      "title": "Get notifications",
-      "description": "We'll request browser notification permission.",
-      "note": "After that, you can add zones of interest and receive notifications about events in them.",
-      "allow": "Allow notifications",
-      "notNow": "Not now"
-    },
-    "loginPrompt": {
-      "title": "Track local messages",
-      "description": "Sign in, subscribe, and get notifications when there are messages for the zones you're interested in.",
-      "signIn": "Sign in with Google",
-      "later": "Later"
-    },
-    "subscribePrompt": {
-      "title": "No notification subscription",
-      "description": "You have zones of interest, but you're not subscribed to notifications. This is OboApp's main purpose!",
-      "goToSettings": "Go to settings",
-      "later": "Later"
-    },
-    "addInterestsPrompt": {
-      "title": "Track selected zones",
-      "description": "Choose places that matter to you and get notifications when there's something new there.",
-      "addZone": "Add zone",
-      "later": "Later"
-    },
-    "geolocationPrompt": {
-      "title": "Show my location",
-      "description": "Would you like us to center the map on your current location?",
-      "note": "We won't use it for anything else. You can revoke access at any time in your browser settings.",
-      "allow": "Allow access",
-      "notNow": "Not now"
-    },
-    "blockedNotifications": {
-      "title": "Notifications are blocked",
-      "description": "Your browser or device does not allow notifications. You can enable them from your browser settings."
-    },
-    "addInterestButton": {
-      "label": "Add zone",
-      "ariaLabel": "Add zone"
-    },
-    "notificationButton": {
-      "label": "Get notifications",
-      "ariaLabel": "Get notifications"
-    },
-    "loadingButton": {
-      "ariaLabel": "Loading..."
-    }
   },
   "footer": {
     "about": "About the project",
@@ -251,42 +213,17 @@
     "showMyLocation": "Show my location"
   },
   "interestZone": {
-    "move": "Move"
-  },
-  "messageDetail": {
-    "title": "Signal Details",
-    "addresses": "Addresses",
-    "locations": "Locations",
-    "streetSections": "Street Sections",
-    "source": "Source",
-    "openSourceInNewTab": "Open {source} in new tab",
-    "active": "Active",
-    "archived": "Past",
-    "publishedHere": "Published here",
-    "categories": "Categories",
-    "text": "Text",
-    "responsibleInstitution": "Responsible Institution",
-    "mapObjects": "Map Objects",
-    "mapObjectsCount": "{count} {count, plural, one {object} other {objects}} on the map",
-    "ariaLabel": "Signal details"
-  },
-  "notifications": {
-    "title": "Notification History",
-    "loadError": "Failed to load notification history",
-    "backToSettings": "Back to settings",
-    "noNotifications": "You have not received any notifications yet",
-    "source": "Source: {source}",
-    "sentToDevices": "Sent to {count} devices",
-    "prompt": {
-      "geolocation": "We won't use it for anything else. You can revoke access anytime in your browser settings.",
-      "blocked": "Your browser or device doesn't allow notifications. You can enable them in your browser settings.",
-      "goToSettings": "Go to Settings"
-    }
+    "move": "Move",
+    "radiusLabel": "Radius:",
+    "saveZone": "Save zone"
   },
   "ingestErrors": {
     "title": "Messages with processing issues",
     "description": "Finalized messages without GeoJSON that contain processing error records.",
     "loadError": "Failed to load messages. Please try again.",
     "noMessages": "No messages available"
+  },
+  "sources": {
+    "title": "Data Sources"
   }
 }

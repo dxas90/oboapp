@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { NotificationSubscription } from "@/lib/types";
 import { parseUserAgent } from "@/lib/parse-user-agent";
 import { buttonStyles } from "@/lib/theme";
@@ -13,6 +14,7 @@ export default function DeviceSubscriptionCard({
   isCurrentDevice,
   onUnsubscribe,
 }: DeviceSubscriptionCardProps) {
+  const t = useTranslations("settings");
   const parsed = parseUserAgent(subscription.deviceInfo?.userAgent || "");
   const createdDate = new Date(subscription.createdAt).toLocaleDateString(
     "bg-BG",
@@ -36,12 +38,12 @@ export default function DeviceSubscriptionCard({
           <span>{parsed.displayName}</span>
           {isCurrentDevice && (
             <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded whitespace-nowrap">
-              Това устройство
+              {t("thisDevice")}
             </span>
           )}
         </p>
         <p className="text-xs text-neutral sm:before:content-['•'] sm:before:mr-2">
-          Добавено: {createdDate}
+          {t("addedOn", { date: createdDate })}
         </p>
       </div>
       <button
@@ -49,7 +51,7 @@ export default function DeviceSubscriptionCard({
         onClick={() => onUnsubscribe(subscription.token)}
         className={`text-xs whitespace-nowrap flex-shrink-0 ${buttonStyles.linkDestructive}`}
       >
-        Отписване
+        {t("unsubscribe")}
       </button>
     </div>
   );

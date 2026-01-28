@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Interest } from "@/lib/types";
 import EmptyZonesMessage from "./EmptyZonesMessage";
 import ZoneCard from "./ZoneCard";
@@ -9,10 +10,11 @@ interface ZonesSectionProps {
 }
 
 export default function ZonesSection({ interests }: ZonesSectionProps) {
+  const t = useTranslations("settings");
   return (
     <section className="bg-white rounded-lg shadow mb-6 p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">
-        Зони на интерес
+        {t("zonesTitle")}
       </h2>
 
       {!interests || interests.length === 0 ? (
